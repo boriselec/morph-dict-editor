@@ -11,9 +11,8 @@ import java.util.function.Consumer;
 
 /**
  * Contains xml events.
- * Implements reader interface, so can be used as writer source.
  */
-public class EventContainer implements XMLEventReader {
+public class EventContainer implements Iterable<XMLEvent> {
     private Iterator<XMLEvent> iterator;
 
     protected void read(String name,
@@ -51,41 +50,7 @@ public class EventContainer implements XMLEventReader {
     }
 
     @Override
-    public XMLEvent nextEvent() {
-        return iterator.next();
-    }
-
-    @Override
-    public boolean hasNext() {
-        return iterator.hasNext();
-    }
-
-    @Override
-    public Object next() {
-        return nextEvent();
-    }
-
-    @Override
-    public XMLEvent peek() throws XMLStreamException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String getElementText() throws XMLStreamException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public XMLEvent nextTag() throws XMLStreamException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Object getProperty(String name) throws IllegalArgumentException {
-        return null;
-    }
-
-    @Override
-    public void close() throws XMLStreamException {
+    public Iterator<XMLEvent> iterator() {
+        return iterator;
     }
 }
