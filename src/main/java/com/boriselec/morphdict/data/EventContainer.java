@@ -7,33 +7,47 @@ import javax.xml.stream.events.XMLEvent;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Contains xml events.
  * Implements reader interface, so can be used as writer source.
  */
 public class EventContainer implements XMLEventReader {
-    private final Iterator<XMLEvent> iterator;
+    private Iterator<XMLEvent> iterator;
 
-    protected EventContainer(String name, XMLEvent startElement, XMLEventReader in) throws XMLStreamException {
+    protected void read(String name,
+                        XMLEvent startElement,
+                        XMLEventReader in,
+                        Consumer<XMLEvent>... handlers) throws XMLStreamException {
         List<XMLEvent> events = new LinkedList<>();
-        events.add(startElement);
-        readUntilEndElement(events, name, in);
+        addEvent(events, startElement, handlers);
+        readUntilEndElement(events, name, in, handlers);
         iterator = events.iterator();
     }
 
-    private void readUntilEndElement(List<XMLEvent> events, String name, XMLEventReader in) throws XMLStreamException {
+    private void readUntilEndElement(List<XMLEvent> events,
+                                     String name,
+                                     XMLEventReader in,
+                                     Consumer<XMLEvent>... handlers) throws XMLStreamException {
         while (in.hasNext()) {
             XMLEvent event = in.nextEvent();
             if (event.isEndElement()) {
                 EndElement endElement = event.asEndElement();
                 if (name.equals(endElement.getName().getLocalPart())) {
-                    events.add(event);
+                    addEvent(events, event, handlers);
                     return;
                 }
             }
-            events.add(event);
+            addEvent(events, event, handlers);
         }
+    }
+
+    private void addEvent(List<XMLEvent> events, XMLEvent newEvent, Consumer<XMLEvent>... handlers) {
+        for (Consumer<XMLEvent> handler : handlers) {
+            handler.accept(newEvent);
+        }
+        events.add(newEvent);
     }
 
     @Override

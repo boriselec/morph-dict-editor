@@ -23,7 +23,7 @@ public class XmlTransformer {
         this.xmlEventFactory = xmlEventFactory;
     }
 
-    public void transform(InputStream inputStream, OutputStream outputStream) throws XMLStreamException {
+    public void transform(InputStream inputStream, OutputStream outputStream, LemmaHandler handler) throws XMLStreamException {
         XMLEventReader in = xmlInputFactory.createXMLEventReader(inputStream);
         XMLEventWriter out = xmlOutputFactory.createXMLEventWriter(outputStream);
 
@@ -31,7 +31,12 @@ public class XmlTransformer {
             XMLEvent xmlEvent = in.nextEvent();
             if (isLemma(xmlEvent)) {
                 Lemma lemma = new Lemma(xmlEvent.asStartElement(), in);
-                out.add(lemma);
+                switch (handler.handle(lemma)) {
+                    case SKIP:
+                        break;
+                    case CONTINUE:
+                        out.add(lemma);
+                }
             } else {
                 flush(xmlEvent, out);
             }
