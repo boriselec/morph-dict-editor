@@ -10,6 +10,8 @@ import java.io.*;
 
 public class App {
     public static void main(String[] args) throws IOException, XMLStreamException {
+        System.setProperty("line.separator", "\n");
+
         XMLInputFactory xmlFactory = XMLInputFactory.newInstance();
         XMLOutputFactory outFactory = XMLOutputFactory.newInstance();
         XMLEventFactory xmlEventFactory = XMLEventFactory.newFactory();
