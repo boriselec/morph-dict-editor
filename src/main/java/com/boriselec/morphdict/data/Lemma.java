@@ -1,5 +1,6 @@
 package com.boriselec.morphdict.data;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
@@ -20,7 +21,21 @@ import javax.xml.stream.events.XMLEvent;
  * </pre>
  */
 public class Lemma extends EventContainer {
+    private String text;
+
     public Lemma(XMLEvent startElement, XMLEventReader in) throws XMLStreamException {
-        super("lemma", startElement, in);
+        read("lemma", startElement, in, this::extractCanonical);
+        assert text != null;
+    }
+
+    private void extractCanonical(XMLEvent event) {
+        if (event.isStartElement() && "l".equals(event.asStartElement().getName().getLocalPart())) {
+            assert text == null;
+            this.text = event.asStartElement().getAttributeByName(QName.valueOf("t")).getValue();
+        }
+    }
+
+    public String getText() {
+        return text;
     }
 }

@@ -1,6 +1,7 @@
 package com.boriselec.morphdict;
 
-import com.boriselec.morphdict.edit.XmlTransformer;
+import com.boriselec.morphdict.edit.*;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLInputFactory;
@@ -21,7 +22,11 @@ public class App {
         InputStream inputStream = new FileInputStream("C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\dict.opcorpora.xml");
         OutputStream outputStream = new FileOutputStream("C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\dict.opcorpora.filtered.tmp.xml");
 
-        xmlTransformer.transform(inputStream, outputStream);
+        LemmaHandler handler = new ChainLemmaHandler(
+            new BlackListTextLemmaFilter("ёж"),
+            new DigitLemmaFilter()
+        );
+        xmlTransformer.transform(inputStream, outputStream, handler);
 
         inputStream.close();
         outputStream.close();
@@ -36,11 +41,13 @@ public class App {
         String line = br.readLine();
 
         while (line != null) {
-            writer.println(line
-                .replaceAll("></g>", "/>")
-                .replaceAll("></link>", "/>")
-                .replaceAll("utf-8\"\\?>", "utf-8\" standalone=\"yes\"?>\n")
-            );
+            if (!StringUtils.isBlank(line)) {
+                writer.println(line
+                    .replaceAll("></g>", "/>")
+                    .replaceAll("></link>", "/>")
+                    .replaceAll("utf-8\"\\?>", "utf-8\" standalone=\"yes\"?>\n")
+                );
+            }
             line = br.readLine();
         }
 
