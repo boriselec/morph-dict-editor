@@ -3,6 +3,7 @@ package com.boriselec.morphdict.edit;
 import com.boriselec.morphdict.data.Lemma;
 
 import javax.xml.stream.*;
+import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.XMLEvent;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -13,17 +14,20 @@ import java.io.OutputStream;
 public class XmlTransformer {
     private final XMLInputFactory xmlInputFactory;
     private final XMLOutputFactory xmlOutputFactory;
-    private final XMLEventFactory xmlEventFactory;
+    private final LemmaHandler lemmaHandler;
+    private final EventFilter disabledTagFilter;
 
     public XmlTransformer(XMLInputFactory xmlInputFactory,
                           XMLOutputFactory xmlOutputFactory,
-                          XMLEventFactory xmlEventFactory) {
+                          LemmaHandler lemmaHandler,
+                          EventFilter disabledTagFilter) {
         this.xmlInputFactory = xmlInputFactory;
         this.xmlOutputFactory = xmlOutputFactory;
-        this.xmlEventFactory = xmlEventFactory;
+        this.lemmaHandler = lemmaHandler;
+        this.disabledTagFilter = disabledTagFilter;
     }
 
-    public void transform(InputStream inputStream, OutputStream outputStream, LemmaHandler handler) throws XMLStreamException {
+    public void transform(InputStream inputStream, OutputStream outputStream) throws XMLStreamException {
         XMLEventReader in = xmlInputFactory.createXMLEventReader(inputStream);
         XMLEventWriter out = xmlOutputFactory.createXMLEventWriter(outputStream);
 
@@ -31,14 +35,16 @@ public class XmlTransformer {
             XMLEvent xmlEvent = in.nextEvent();
             if (isLemma(xmlEvent)) {
                 Lemma lemma = new Lemma(xmlEvent.asStartElement(), in);
-                switch (handler.handle(lemma)) {
+                switch (lemmaHandler.handle(lemma)) {
                     case SKIP:
                         break;
                     case CONTINUE:
-                        out.add(lemma);
+                        for (XMLEvent event : lemma) {
+                            flush(event, in, out);
+                        }
                 }
             } else {
-                flush(xmlEvent, out);
+                flush(xmlEvent, in, out);
             }
         }
     }
@@ -47,7 +53,24 @@ public class XmlTransformer {
         return event.isStartElement() && "lemma".equals(event.asStartElement().getName().getLocalPart());
     }
 
-    private void flush(XMLEvent xmlEvent, XMLEventWriter out) throws XMLStreamException {
-        out.add(xmlEvent);
+    private void flush(XMLEvent xmlEvent, XMLEventReader in, XMLEventWriter out) throws XMLStreamException {
+        if (disabledTagFilter.accept(xmlEvent)) {
+            skipUntilEndElement(in, xmlEvent);
+        } else {
+            out.add(xmlEvent);
+        }
+    }
+
+    private void skipUntilEndElement(XMLEventReader in, XMLEvent xmlEvent) throws XMLStreamException {
+        String name = xmlEvent.asStartElement().getName().getLocalPart();
+        while (in.hasNext()) {
+            XMLEvent nextEvent = in.nextEvent();
+            if (nextEvent.isEndElement()) {
+                EndElement endElement = nextEvent.asEndElement();
+                if (name.equals(endElement.getName().getLocalPart())) {
+                    return;
+                }
+            }
+        }
     }
 }

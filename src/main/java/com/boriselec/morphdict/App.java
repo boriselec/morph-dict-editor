@@ -3,10 +3,7 @@ package com.boriselec.morphdict;
 import com.boriselec.morphdict.edit.*;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.xml.stream.XMLEventFactory;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.*;
 import java.io.*;
 
 public class App {
@@ -15,18 +12,20 @@ public class App {
 
         XMLInputFactory xmlFactory = XMLInputFactory.newInstance();
         XMLOutputFactory outFactory = XMLOutputFactory.newInstance();
-        XMLEventFactory xmlEventFactory = XMLEventFactory.newFactory();
-
-        XmlTransformer xmlTransformer = new XmlTransformer(xmlFactory, outFactory, xmlEventFactory);
-
-        InputStream inputStream = new FileInputStream("C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\dict.opcorpora.xml");
-        OutputStream outputStream = new FileOutputStream("C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\dict.opcorpora.filtered.tmp.xml");
 
         LemmaHandler handler = new ChainLemmaHandler(
             new BlackListTextLemmaFilter("ёж"),
             new DigitLemmaFilter()
         );
-        xmlTransformer.transform(inputStream, outputStream, handler);
+
+        EventFilter xmlTagFilter = new XmlTagFilter("grammemes", "link_types", "links", "restrictions");
+
+        XmlTransformer xmlTransformer = new XmlTransformer(xmlFactory, outFactory, handler, xmlTagFilter);
+
+        InputStream inputStream = new FileInputStream("C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\dict.opcorpora.xml");
+        OutputStream outputStream = new FileOutputStream("C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\dict.opcorpora.filtered.tmp.xml");
+
+        xmlTransformer.transform(inputStream, outputStream);
 
         inputStream.close();
         outputStream.close();
