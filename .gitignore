@@ -12,7 +12,7 @@ buildNumber.properties
 #intellij
 .idea/
 *.iws
-out/
+/out/
 *.iml
 modules.xml
 *.ipr
