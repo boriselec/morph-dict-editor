@@ -12,6 +12,7 @@ public class App {
 
         XMLInputFactory xmlFactory = XMLInputFactory.newInstance();
         XMLOutputFactory outFactory = XMLOutputFactory.newInstance();
+        XMLEventFactory eventFactory = XMLEventFactory.newFactory();
 
         LemmaHandler handler = new ChainLemmaHandler(
             new BlackListTextLemmaFilter("ёж"),
@@ -19,8 +20,9 @@ public class App {
         );
 
         EventFilter xmlTagFilter = new XmlTagFilter("grammemes", "link_types", "links", "restrictions");
+        XmlAttributeFilter xmlAttrFilter = new XmlAttributeFilter(eventFactory, "id", "rev");
 
-        XmlTransformer xmlTransformer = new XmlTransformer(xmlFactory, outFactory, handler, xmlTagFilter);
+        XmlTransformer xmlTransformer = new XmlTransformer(xmlFactory, outFactory, handler, xmlTagFilter, xmlAttrFilter);
 
         InputStream inputStream = new FileInputStream("C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\dict.opcorpora.xml");
         OutputStream outputStream = new FileOutputStream("C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\dict.opcorpora.filtered.tmp.xml");

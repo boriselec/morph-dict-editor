@@ -16,15 +16,18 @@ public class XmlTransformer {
     private final XMLOutputFactory xmlOutputFactory;
     private final LemmaHandler lemmaHandler;
     private final EventFilter disabledTagFilter;
+    private final XmlAttributeFilter disabledAttrFilter;
 
     public XmlTransformer(XMLInputFactory xmlInputFactory,
                           XMLOutputFactory xmlOutputFactory,
                           LemmaHandler lemmaHandler,
-                          EventFilter disabledTagFilter) {
+                          EventFilter disabledTagFilter,
+                          XmlAttributeFilter disabledAttrFilter) {
         this.xmlInputFactory = xmlInputFactory;
         this.xmlOutputFactory = xmlOutputFactory;
         this.lemmaHandler = lemmaHandler;
         this.disabledTagFilter = disabledTagFilter;
+        this.disabledAttrFilter = disabledAttrFilter;
     }
 
     public void transform(InputStream inputStream, OutputStream outputStream) throws XMLStreamException {
@@ -57,7 +60,8 @@ public class XmlTransformer {
         if (disabledTagFilter.accept(xmlEvent)) {
             skipUntilEndElement(in, xmlEvent);
         } else {
-            out.add(xmlEvent);
+            XMLEvent trimmedEvent = disabledAttrFilter.trim(xmlEvent);
+            out.add(trimmedEvent);
         }
     }
 
