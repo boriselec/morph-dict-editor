@@ -1,8 +1,7 @@
 package com.boriselec.morphdict;
 
 import com.boriselec.morphdict.dom.data.Lemma;
-import com.boriselec.morphdict.dom.edit.LemmaReader;
-import com.boriselec.morphdict.dom.edit.LemmaTransformer;
+import com.boriselec.morphdict.dom.edit.*;
 import com.boriselec.morphdict.dom.out.LemmaWriter;
 import com.boriselec.morphdict.dom.out.LemmaWriterFactory;
 import com.google.gson.Gson;
@@ -33,7 +32,10 @@ public class DomApp {
         LemmaReader in = new LemmaReader(unmarshaller, "C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\dict.opcorpora.xml");
         LemmaWriter out = writerFactory.createXmlWriter("C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\dict.opcorpora.filtered");
 
-        LemmaTransformer transformer = new LemmaTransformer();
+        LemmaTransformer transformer = new ChainLemmaTransformer(
+            new BlackListTextLemmaFilter("ёж"),
+            new DigitLemmaFilter()
+        );
 
         try {
             for (Lemma lemma : in) {
