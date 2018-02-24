@@ -31,6 +31,7 @@ public class XmlLemmaWriter extends LemmaWriter {
         } catch (JAXBException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
+        getWriter().println();
     }
 
     @Override
