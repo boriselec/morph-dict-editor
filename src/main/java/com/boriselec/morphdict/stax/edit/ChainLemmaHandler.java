@@ -1,6 +1,6 @@
-package com.boriselec.morphdict.edit;
+package com.boriselec.morphdict.stax.edit;
 
-import com.boriselec.morphdict.data.Lemma;
+import com.boriselec.morphdict.stax.data.LemmaEvent;
 
 /**
  * Chain of handlers
@@ -13,7 +13,7 @@ public class ChainLemmaHandler implements LemmaHandler {
     }
 
     @Override
-    public Action handle(Lemma lemma) {
+    public Action handle(LemmaEvent lemma) {
         for (LemmaHandler handler : handlers) {
             switch (handler.handle(lemma)) {
                 case CONTINUE:

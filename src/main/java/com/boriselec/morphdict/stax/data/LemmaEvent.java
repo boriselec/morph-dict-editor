@@ -1,4 +1,4 @@
-package com.boriselec.morphdict.data;
+package com.boriselec.morphdict.stax.data;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
@@ -6,7 +6,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
 /**
- * Lemma
+ * LemmaEvent
  *
  * <pre>
  * {@code
@@ -20,10 +20,10 @@ import javax.xml.stream.events.XMLEvent;
  * }
  * </pre>
  */
-public class Lemma extends EventContainer {
+public class LemmaEvent extends EventContainer {
     private String text;
 
-    public Lemma(XMLEvent startElement, XMLEventReader in) throws XMLStreamException {
+    public LemmaEvent(XMLEvent startElement, XMLEventReader in) throws XMLStreamException {
         read("lemma", startElement, in, this::extractCanonical);
         assert text != null;
     }

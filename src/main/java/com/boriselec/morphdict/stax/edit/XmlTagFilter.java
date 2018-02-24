@@ -1,4 +1,4 @@
-package com.boriselec.morphdict.edit;
+package com.boriselec.morphdict.stax.edit;
 
 import javax.xml.stream.EventFilter;
 import javax.xml.stream.events.XMLEvent;

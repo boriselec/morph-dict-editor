@@ -1,6 +1,6 @@
-package com.boriselec.morphdict.edit;
+package com.boriselec.morphdict.stax.edit;
 
-import com.boriselec.morphdict.data.Lemma;
+import com.boriselec.morphdict.stax.data.LemmaEvent;
 
 import javax.xml.stream.*;
 import javax.xml.stream.events.EndElement;
@@ -37,7 +37,7 @@ public class XmlTransformer {
         while (in.hasNext()) {
             XMLEvent xmlEvent = in.nextEvent();
             if (isLemma(xmlEvent)) {
-                Lemma lemma = new Lemma(xmlEvent.asStartElement(), in);
+                LemmaEvent lemma = new LemmaEvent(xmlEvent.asStartElement(), in);
                 switch (lemmaHandler.handle(lemma)) {
                     case SKIP:
                         break;

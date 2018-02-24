@@ -1,6 +1,6 @@
-package com.boriselec.morphdict.edit;
+package com.boriselec.morphdict.stax.edit;
 
-import com.boriselec.morphdict.data.Lemma;
+import com.boriselec.morphdict.stax.data.LemmaEvent;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -11,7 +11,7 @@ public class DigitLemmaFilterTest {
     @Test
     public void shouldSkipOnDigitWord() throws Exception {
         DigitLemmaFilter filter = new DigitLemmaFilter();
-        Lemma lemma = mock(Lemma.class);
+        LemmaEvent lemma = mock(LemmaEvent.class);
         when(lemma.getText()).thenReturn("test1");
 
         LemmaHandler.Action action = filter.handle(lemma);
@@ -22,7 +22,7 @@ public class DigitLemmaFilterTest {
     @Test
     public void shouldContinueOnLetterWord() throws Exception {
         DigitLemmaFilter filter = new DigitLemmaFilter();
-        Lemma lemma = mock(Lemma.class);
+        LemmaEvent lemma = mock(LemmaEvent.class);
         when(lemma.getText()).thenReturn("test");
 
         LemmaHandler.Action action = filter.handle(lemma);

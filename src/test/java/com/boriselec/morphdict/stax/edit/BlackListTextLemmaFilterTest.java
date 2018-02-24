@@ -1,6 +1,6 @@
-package com.boriselec.morphdict.edit;
+package com.boriselec.morphdict.stax.edit;
 
-import com.boriselec.morphdict.data.Lemma;
+import com.boriselec.morphdict.stax.data.LemmaEvent;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -11,7 +11,7 @@ public class BlackListTextLemmaFilterTest {
     @Test
     public void shouldSkipEntryInBlackList() throws Exception {
         BlackListTextLemmaFilter filter = new BlackListTextLemmaFilter("test");
-        Lemma lemma = mock(Lemma.class);
+        LemmaEvent lemma = mock(LemmaEvent.class);
         when(lemma.getText()).thenReturn("test");
 
         LemmaHandler.Action action = filter.handle(lemma);
@@ -22,7 +22,7 @@ public class BlackListTextLemmaFilterTest {
     @Test
     public void shouldContinueOnOtherWord() throws Exception {
         BlackListTextLemmaFilter filter = new BlackListTextLemmaFilter("test");
-        Lemma lemma = mock(Lemma.class);
+        LemmaEvent lemma = mock(LemmaEvent.class);
         when(lemma.getText()).thenReturn("notTest");
 
         LemmaHandler.Action action = filter.handle(lemma);

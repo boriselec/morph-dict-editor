@@ -1,6 +1,6 @@
 package com.boriselec.morphdict;
 
-import com.boriselec.morphdict.edit.*;
+import com.boriselec.morphdict.stax.edit.*;
 import de.odysseus.staxon.json.JsonXMLConfig;
 import de.odysseus.staxon.json.JsonXMLConfigBuilder;
 import de.odysseus.staxon.json.JsonXMLOutputFactory;
