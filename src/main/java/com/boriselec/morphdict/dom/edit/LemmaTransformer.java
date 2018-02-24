@@ -7,12 +7,10 @@ import java.util.Optional;
 /**
  * Transforms lemmas
  */
-public class LemmaTransformer {
+public interface LemmaTransformer {
     /**
      * @param lemma dictionary entry
      * @return transformed (empty if skip)
      */
-    public Optional<Lemma> transform(Lemma lemma) {
-        return Optional.of(lemma);
-    }
+    Optional<Lemma> transform(Lemma lemma);
 }
