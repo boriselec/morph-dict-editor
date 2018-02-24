@@ -1,4 +1,4 @@
-package com.boriselec.morphdict.data;
+package com.boriselec.morphdict.stax.data;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamException;

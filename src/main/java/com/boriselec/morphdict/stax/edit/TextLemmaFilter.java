@@ -1,6 +1,6 @@
-package com.boriselec.morphdict.edit;
+package com.boriselec.morphdict.stax.edit;
 
-import com.boriselec.morphdict.data.Lemma;
+import com.boriselec.morphdict.stax.data.LemmaEvent;
 
 import java.util.function.Function;
 
@@ -9,7 +9,7 @@ import java.util.function.Function;
  */
 public abstract class TextLemmaFilter implements LemmaHandler {
     @Override
-    public final Action handle(Lemma lemma) {
+    public final Action handle(LemmaEvent lemma) {
         return disabled().apply(lemma.getText()) ? Action.SKIP : Action.CONTINUE;
     }
 

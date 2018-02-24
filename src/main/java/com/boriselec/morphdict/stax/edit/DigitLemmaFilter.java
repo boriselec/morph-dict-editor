@@ -1,4 +1,4 @@
-package com.boriselec.morphdict.edit;
+package com.boriselec.morphdict.stax.edit;
 
 import java.util.function.Function;
 
