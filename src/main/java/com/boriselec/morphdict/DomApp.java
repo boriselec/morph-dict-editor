@@ -13,6 +13,8 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Optional;
 
 public class DomApp {
@@ -29,7 +31,14 @@ public class DomApp {
 
         LemmaWriterFactory writerFactory = new LemmaWriterFactory(gson, marshaller);
 
-        LemmaReader in = new LemmaReader(unmarshaller, "C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\dict.opcorpora.xml");
+        Lemma newLemma = new Lemma.Builder()
+            .addLemma("лайтово", "ADVB")
+            .addForm("лайтово")
+            .build();
+
+        Iterator<Lemma> predefined = Arrays.asList(newLemma).iterator();
+
+        LemmaReader in = new LemmaReader(unmarshaller, "C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\dict.opcorpora.xml", predefined);
         LemmaWriter out = writerFactory.createXmlWriter("C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\dict.opcorpora.filtered");
 
         LemmaTransformer transformer = new ChainLemmaTransformer(
