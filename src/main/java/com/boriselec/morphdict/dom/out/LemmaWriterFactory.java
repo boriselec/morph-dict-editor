@@ -1,5 +1,6 @@
 package com.boriselec.morphdict.dom.out;
 
+import com.boriselec.morphdict.dom.data.Lemma;
 import com.google.gson.Gson;
 
 import javax.xml.bind.Marshaller;
@@ -20,5 +21,22 @@ public class LemmaWriterFactory {
 
     public LemmaWriter createXmlWriter(String path) throws FileNotFoundException {
         return new XmlLemmaWriter(marshaller, path);
+    }
+
+    public LemmaWriter createConsoleProgressWriter(String path) {
+        return new LemmaWriter() {
+            private int count = 0;
+            @Override
+            public void write(Lemma lemma) {
+                count++;
+                if (count % 1000 == 0) {
+                    System.out.println(count);
+                }
+            }
+
+            @Override
+            public void close() {
+            }
+        };
     }
 }

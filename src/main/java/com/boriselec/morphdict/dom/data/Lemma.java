@@ -25,7 +25,7 @@ import java.util.*;
 public class Lemma {
     @XmlElement(name = "l")
     @SerializedName("l")
-    public LemmaForm lemmaForm;
+    public WordForm lemmaForm;
     @XmlElement(name = "f")
     @SerializedName("f")
     public List<WordForm> wordForms;
@@ -33,28 +33,30 @@ public class Lemma {
     public Lemma() {
     }
 
-    private Lemma(LemmaForm lemmaForm, List<WordForm> wordForms) {
+    private Lemma(WordForm lemmaForm, List<WordForm> wordForms) {
         this.lemmaForm = Objects.requireNonNull(lemmaForm);
         this.wordForms = Objects.requireNonNull(wordForms);
     }
 
     public static final class Builder {
-        private LemmaForm lemmaForm;
+        private WordForm lemmaForm;
         private List<WordForm> wordForms = new LinkedList<>();
 
         public Builder addLemma(String text, String... grammemes) {
-            lemmaForm = new LemmaForm();
-            lemmaForm.text = text;
-            lemmaForm.grammemes = grammemes != null ? Arrays.asList(grammemes) : Collections.emptyList();
+            lemmaForm = create(text, grammemes);
             return this;
         }
 
         public Builder addForm(String text, String... grammemes) {
+            wordForms.add(create(text, grammemes));
+            return this;
+        }
+
+        private WordForm create(String text, String... grammemes) {
             WordForm wordForm = new WordForm();
             wordForm.text = text;
             wordForm.grammemes = grammemes != null ? Arrays.asList(grammemes) : Collections.emptyList();
-            wordForms.add(wordForm);
-            return this;
+            return wordForm;
         }
 
         public Lemma build() {

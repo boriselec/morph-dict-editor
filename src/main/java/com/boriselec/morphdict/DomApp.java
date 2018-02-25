@@ -38,7 +38,7 @@ public class DomApp {
 
         Iterator<Lemma> predefined = Arrays.asList(newLemma).iterator();
 
-        LemmaReader in = new LemmaReader(unmarshaller, "C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\dict.opcorpora.xml", predefined);
+        LemmaReader in = new LemmaReader(unmarshaller, "C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\dict.opcorpora.small.xml", predefined);
         LemmaWriter out = writerFactory.createXmlWriter("C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\dict.opcorpora.filtered");
 
         LemmaTransformer transformer = new ChainLemmaTransformer(
