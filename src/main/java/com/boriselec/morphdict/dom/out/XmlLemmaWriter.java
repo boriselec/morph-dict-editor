@@ -9,7 +9,7 @@ import java.io.FileNotFoundException;
 /**
  * XML writer
  */
-public class XmlLemmaWriter extends LemmaWriter {
+public class XmlLemmaWriter extends FileLemmaWriter {
     private final Marshaller marshaller;
 
     protected XmlLemmaWriter(Marshaller marshaller, String path) throws FileNotFoundException {

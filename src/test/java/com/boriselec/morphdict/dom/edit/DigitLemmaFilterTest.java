@@ -1,7 +1,7 @@
 package com.boriselec.morphdict.dom.edit;
 
 import com.boriselec.morphdict.dom.data.Lemma;
-import com.boriselec.morphdict.dom.data.LemmaForm;
+import com.boriselec.morphdict.dom.data.WordForm;
 import org.junit.Test;
 
 import java.util.Optional;
@@ -14,7 +14,7 @@ public class DigitLemmaFilterTest {
     public void shouldSkipOnDigitWord() throws Exception {
         DigitLemmaFilter filter = new DigitLemmaFilter();
         Lemma lemma = new Lemma();
-        lemma.lemmaForm = new LemmaForm();
+        lemma.lemmaForm = new WordForm();
         lemma.lemmaForm.text = "test1";
 
         Optional<Lemma> transformed = filter.transform(lemma);
@@ -26,7 +26,7 @@ public class DigitLemmaFilterTest {
     public void shouldContinueOnLetterWord() throws Exception {
         DigitLemmaFilter filter = new DigitLemmaFilter();
         Lemma lemma = new Lemma();
-        lemma.lemmaForm = new LemmaForm();
+        lemma.lemmaForm = new WordForm();
         lemma.lemmaForm.text = "test";
 
         Optional<Lemma> transformed = filter.transform(lemma);

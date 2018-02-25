@@ -8,7 +8,7 @@ import java.io.FileNotFoundException;
 /**
  * JSON writer
  */
-public class JsonLemmaWriter extends LemmaWriter {
+public class JsonLemmaWriter extends FileLemmaWriter {
     private final Gson gson;
     private boolean first = true;
 
