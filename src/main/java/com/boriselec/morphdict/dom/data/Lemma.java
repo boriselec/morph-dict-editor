@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.List;
+import java.util.*;
 
 /**
  * LemmaEvent
@@ -29,4 +29,36 @@ public class Lemma {
     @XmlElement(name = "f")
     @SerializedName("f")
     public List<WordForm> wordForms;
+
+    public Lemma() {
+    }
+
+    private Lemma(LemmaForm lemmaForm, List<WordForm> wordForms) {
+        this.lemmaForm = Objects.requireNonNull(lemmaForm);
+        this.wordForms = Objects.requireNonNull(wordForms);
+    }
+
+    public static final class Builder {
+        private LemmaForm lemmaForm;
+        private List<WordForm> wordForms = new LinkedList<>();
+
+        public Builder addLemma(String text, String... grammemes) {
+            lemmaForm = new LemmaForm();
+            lemmaForm.text = text;
+            lemmaForm.grammemes = grammemes != null ? Arrays.asList(grammemes) : Collections.emptyList();
+            return this;
+        }
+
+        public Builder addForm(String text, String... grammemes) {
+            WordForm wordForm = new WordForm();
+            wordForm.text = text;
+            wordForm.grammemes = grammemes != null ? Arrays.asList(grammemes) : Collections.emptyList();
+            wordForms.add(wordForm);
+            return this;
+        }
+
+        public Lemma build() {
+            return new Lemma(lemmaForm, wordForms);
+        }
+    }
 }

@@ -15,11 +15,13 @@ import java.util.NoSuchElementException;
 public class LemmaReader implements Iterator<Lemma>, Iterable<Lemma> {
     private final Unmarshaller unmarshaller;
     private final BufferedReader reader;
+    private final Iterator<Lemma> predefined;
     private Lemma current;
 
-    public LemmaReader(Unmarshaller unmarshaller, String path) throws FileNotFoundException {
+    public LemmaReader(Unmarshaller unmarshaller, String path, Iterator<Lemma> predefined) throws FileNotFoundException {
         this.unmarshaller = unmarshaller;
         reader = new BufferedReader(new FileReader(path));
+        this.predefined = predefined;
     }
 
     @Override
@@ -50,11 +52,14 @@ public class LemmaReader implements Iterator<Lemma>, Iterable<Lemma> {
 
     private void ensureCurrent() {
         if (current == null) {
-            current = read();
+            current = parse();
+        }
+        if (current == null) {
+            current = readPredefined();
         }
     }
 
-    private Lemma read() {
+    private Lemma parse() {
         try {
             String line = reader.readLine();
             while (line != null) {
@@ -75,5 +80,9 @@ public class LemmaReader implements Iterator<Lemma>, Iterable<Lemma> {
 
     private boolean isLemma(String line) {
         return line.contains("<lemma ");
+    }
+
+    private Lemma readPredefined() {
+        return predefined.hasNext() ? predefined.next() : null;
     }
 }
