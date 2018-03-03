@@ -4,6 +4,7 @@ import com.boriselec.morphdict.dom.data.Lemma;
 import com.boriselec.morphdict.dom.edit.*;
 import com.boriselec.morphdict.dom.out.LemmaWriter;
 import com.boriselec.morphdict.dom.out.LemmaWriterFactory;
+import com.boriselec.morphdict.load.DictLoader;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -38,22 +39,23 @@ public class DomApp {
 
         Iterator<Lemma> predefined = Arrays.asList(newLemma).iterator();
 
-        LemmaReader in = new LemmaReader(unmarshaller, "C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\dict.opcorpora.small.xml", predefined);
-        LemmaWriter out = writerFactory.createXmlWriter("C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\dict.opcorpora.filtered");
-
         LemmaTransformer transformer = new ChainLemmaTransformer(
             new BlackListTextLemmaFilter("ёж"),
             new DigitLemmaFilter()
         );
 
-        try {
+        String dict = "C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\dict.opcorpora.xml";
+        DictLoader loader = new DictLoader(dict);
+        loader.ensureLastVersion();
+
+        try (
+            LemmaReader in = new LemmaReader(unmarshaller, dict, predefined);
+            LemmaWriter out = writerFactory.createJsonWriter("C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\dict.opcorpora.filtered");
+        ) {
             for (Lemma lemma : in) {
                 Optional<Lemma> transformed = transformer.transform(lemma);
                 transformed.ifPresent(out::write);
             }
-        } finally {
-            in.close();
-            out.close();
         }
     }
 }
