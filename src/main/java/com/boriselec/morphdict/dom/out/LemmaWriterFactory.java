@@ -1,7 +1,6 @@
 package com.boriselec.morphdict.dom.out;
 
 import com.boriselec.morphdict.dom.data.Lemma;
-import com.boriselec.morphdict.storage.sql.DatabaseLemmaWriter;
 import com.boriselec.morphdict.storage.sql.LemmaDao;
 import com.google.gson.Gson;
 
