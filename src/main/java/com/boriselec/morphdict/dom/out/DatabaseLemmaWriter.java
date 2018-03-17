@@ -24,16 +24,13 @@ public class DatabaseLemmaWriter implements LemmaWriter {
 
         if (currentRevision.isPresent()) {
             if (lemma.revision.equals(currentRevision.get())) {
-                System.out.println("skipped");
                 //skip
                 return;
             } else {
-                System.out.println("deleted");
                 dao.delete(lemma.id);
             }
         }
 
-        System.out.println("inserted");
         String json = gson.toJson(lemma);
         dao.insertFromCorpora(json, lemma);
     }
