@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 import static java.util.Objects.requireNonNull;
 
@@ -20,12 +20,12 @@ public class LemmaDao {
         this.jdbi = jdbi;
     }
 
-    public List<Lemma> get(int from, int to, Function<String, Lemma> deserializer) {
+    public List<Lemma> get(int from, int to, BiFunction<Integer, String, Lemma> deserializer) {
         return jdbi.withHandle(handle ->
-            handle.createQuery("SELECT JSON FROM LEMMA WHERE ROWNUM BETWEEN :from AND :to")
+            handle.createQuery("SELECT ID, JSON FROM LEMMA WHERE ROWNUM BETWEEN :from AND :to")
                 .bind("from", from)
                 .bind("to", to)
-                .map((rs, ctx) -> deserializer.apply(rs.getString("JSON")))
+                .map((rs, ctx) -> deserializer.apply(rs.getInt("ID"), rs.getString("JSON")))
                 .list()
         );
     }
