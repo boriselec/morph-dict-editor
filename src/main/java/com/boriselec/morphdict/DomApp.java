@@ -6,9 +6,10 @@ import com.boriselec.morphdict.dom.out.LemmaWriter;
 import com.boriselec.morphdict.dom.out.LemmaWriterFactory;
 import com.boriselec.morphdict.load.DictLoader;
 import com.boriselec.morphdict.storage.VersionStorage;
-import com.boriselec.morphdict.storage.file.FileVersionStorage;
+import com.boriselec.morphdict.storage.sql.VersionDao;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.jdbi.v3.core.Jdbi;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -45,7 +46,9 @@ public class DomApp {
             new BlackListTextLemmaFilter("ёж"),
             new DigitLemmaFilter()
         );
-        VersionStorage versionStorage = new FileVersionStorage("C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\.dictversion");
+
+        Jdbi jdbi = Jdbi.create("jdbc:h2:file:C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\db");
+        VersionStorage versionStorage = new VersionDao(jdbi);
 
         String dict = "C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\dict.opcorpora.xml";
         DictLoader loader = new DictLoader(dict, versionStorage);
