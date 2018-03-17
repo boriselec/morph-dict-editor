@@ -1,5 +1,6 @@
 package com.boriselec.morphdict.dom.data;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import javax.xml.bind.annotation.XmlAttribute;
@@ -8,8 +9,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.*;
 
 /**
- * LemmaEvent
- *
  * <pre>
  * {@code
  *
@@ -25,9 +24,11 @@ import java.util.*;
 @XmlRootElement(name = "lemma")
 public class Lemma {
     @XmlElement(name = "l")
+    @Expose
     @SerializedName("l")
     public WordForm lemmaForm;
     @XmlElement(name = "f")
+    @Expose
     @SerializedName("f")
     public List<WordForm> wordForms;
     @XmlAttribute(name = "id")
