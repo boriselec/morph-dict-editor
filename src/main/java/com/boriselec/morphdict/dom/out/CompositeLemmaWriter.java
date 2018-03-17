@@ -1,7 +1,6 @@
-package com.boriselec.morphdict.storage.sql;
+package com.boriselec.morphdict.dom.out;
 
 import com.boriselec.morphdict.dom.data.Lemma;
-import com.boriselec.morphdict.dom.out.LemmaWriter;
 
 public class CompositeLemmaWriter implements LemmaWriter {
     private final LemmaWriter[] writers;

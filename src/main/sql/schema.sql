@@ -10,3 +10,6 @@ CREATE TABLE LEMMA (
   STATE TINYINT NOT NULL,
   PRIMARY KEY (ID),
 );
+
+-- do not intersect with opercorpora id which is positive
+CREATE SEQUENCE LEMMA_ID START WITH -1 INCREMENT BY -1;
