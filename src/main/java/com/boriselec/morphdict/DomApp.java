@@ -7,22 +7,21 @@ import com.boriselec.morphdict.dom.out.LemmaWriterFactory;
 import com.boriselec.morphdict.load.DictLoader;
 import com.boriselec.morphdict.storage.VersionStorage;
 import com.boriselec.morphdict.storage.sql.CompositeLemmaWriter;
+import com.boriselec.morphdict.storage.sql.DatabaseLemmaReader;
+import com.boriselec.morphdict.storage.sql.LemmaDao;
 import com.boriselec.morphdict.storage.sql.VersionDao;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.jdbi.v3.core.Jdbi;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Iterator;
 
 public class DomApp {
-    public static void main(String[] args) throws IOException, ParserConfigurationException, JAXBException {
+    public static void main(String[] args) throws Exception {
         System.setProperty("line.separator", "\n");
 
         JAXBContext jaxbContext = JAXBContext.newInstance(Lemma.class);
@@ -31,7 +30,7 @@ public class DomApp {
         marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
 
         GsonBuilder gsonBuilder = new GsonBuilder();
-        Gson gson = gsonBuilder.create();
+        Gson gson = gsonBuilder.excludeFieldsWithoutExposeAnnotation().create();
 
         LemmaWriterFactory writerFactory = new LemmaWriterFactory(gson, marshaller);
 
@@ -50,14 +49,16 @@ public class DomApp {
         Jdbi jdbi = Jdbi.create("jdbc:h2:file:C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\db");
         VersionStorage versionStorage = new VersionDao(jdbi);
 
+        LemmaDao lemmaDao = new LemmaDao(jdbi);
+
         String dict = "C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\dict.opcorpora.xml";
         DictLoader loader = new DictLoader(dict, versionStorage);
         loader.ensureLastVersion();
 
         try (
-            FileLemmaReader in = new FileLemmaReader(unmarshaller, dict);
+            LemmaReader in = new DatabaseLemmaReader(lemmaDao, gson);
             LemmaWriter out = new CompositeLemmaWriter(
-                writerFactory.createDatabaseWriter(jdbi, gson),
+                writerFactory.createJsonWriter("C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\dict.opcorpora.filtered"),
                 writerFactory.createConsoleProgressWriter()
             )
         ) {

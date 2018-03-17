@@ -13,7 +13,7 @@ import java.util.NoSuchElementException;
 /**
  * Parse and iterate lemmas through input
  */
-public class FileLemmaReader implements Iterator<Lemma>, Iterable<Lemma>, AutoCloseable {
+public class FileLemmaReader implements LemmaReader {
     private final Unmarshaller unmarshaller;
     private final BufferedReader reader;
     private Lemma current;
