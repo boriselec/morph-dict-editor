@@ -24,4 +24,12 @@ public class LemmaDao {
                 .list()
         );
     }
+
+    public void delete(int id) {
+        jdbi.withHandle(handle ->
+            handle.createUpdate("DELETE FROM LEMMA WHERE ID = :id")
+                .bind("id", id)
+                .execute()
+        );
+    }
 }
