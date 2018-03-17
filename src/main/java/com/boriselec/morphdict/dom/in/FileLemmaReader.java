@@ -1,7 +1,7 @@
-package com.boriselec.morphdict.dom.edit;
+package com.boriselec.morphdict.dom.in;
 
 import com.boriselec.morphdict.dom.data.Lemma;
-import com.boriselec.morphdict.dom.data.LemmaState;
+import com.boriselec.morphdict.dom.edit.LemmaReader;
 import org.xml.sax.InputSource;
 
 import javax.xml.bind.JAXBException;
@@ -71,9 +71,7 @@ public class FileLemmaReader implements LemmaReader {
     }
 
     private Lemma deserialize(String line) throws UnsupportedEncodingException, JAXBException {
-        Lemma lemma = (Lemma) unmarshaller.unmarshal(new InputSource(new ByteArrayInputStream(line.getBytes("utf-8"))));
-        lemma.state = LemmaState.OPENCORPORA;
-        return lemma;
+        return (Lemma) unmarshaller.unmarshal(new InputSource(new ByteArrayInputStream(line.getBytes("utf-8"))));
     }
 
     private boolean isLemma(String line) {

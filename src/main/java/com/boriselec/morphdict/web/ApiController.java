@@ -4,10 +4,7 @@ import com.boriselec.morphdict.dom.data.Lemma;
 import com.boriselec.morphdict.storage.sql.LemmaDao;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -43,5 +40,13 @@ public class ApiController {
         @RequestParam(value = "id") int id)
     {
         dao.delete(id);
+    }
+
+    @RequestMapping(value = "/lemma", method = RequestMethod.POST)
+    public void postLemma(
+        @RequestBody String json)
+    {
+        Lemma lemma = gson.fromJson(json, Lemma.class);
+        dao.insertNew(json, lemma.lemmaForm.text);
     }
 }

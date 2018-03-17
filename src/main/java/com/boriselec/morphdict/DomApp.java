@@ -2,12 +2,12 @@ package com.boriselec.morphdict;
 
 import com.boriselec.morphdict.dom.data.Lemma;
 import com.boriselec.morphdict.dom.edit.*;
+import com.boriselec.morphdict.dom.in.DatabaseLemmaReader;
+import com.boriselec.morphdict.dom.out.CompositeLemmaWriter;
 import com.boriselec.morphdict.dom.out.LemmaWriter;
 import com.boriselec.morphdict.dom.out.LemmaWriterFactory;
 import com.boriselec.morphdict.load.DictLoader;
 import com.boriselec.morphdict.storage.VersionStorage;
-import com.boriselec.morphdict.storage.sql.CompositeLemmaWriter;
-import com.boriselec.morphdict.storage.sql.DatabaseLemmaReader;
 import com.boriselec.morphdict.storage.sql.LemmaDao;
 import com.boriselec.morphdict.storage.sql.VersionDao;
 import com.google.gson.Gson;
