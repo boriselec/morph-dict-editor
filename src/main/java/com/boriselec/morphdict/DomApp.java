@@ -5,6 +5,8 @@ import com.boriselec.morphdict.dom.edit.*;
 import com.boriselec.morphdict.dom.out.LemmaWriter;
 import com.boriselec.morphdict.dom.out.LemmaWriterFactory;
 import com.boriselec.morphdict.load.DictLoader;
+import com.boriselec.morphdict.storage.VersionStorage;
+import com.boriselec.morphdict.storage.file.FileVersionStorage;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -43,9 +45,10 @@ public class DomApp {
             new BlackListTextLemmaFilter("ёж"),
             new DigitLemmaFilter()
         );
+        VersionStorage versionStorage = new FileVersionStorage("C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\.dictversion");
 
         String dict = "C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\dict.opcorpora.xml";
-        DictLoader loader = new DictLoader(dict);
+        DictLoader loader = new DictLoader(dict, versionStorage);
         loader.ensureLastVersion();
 
         try (

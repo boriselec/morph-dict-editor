@@ -1,5 +1,6 @@
 package com.boriselec.morphdict.load;
 
+import com.boriselec.morphdict.storage.VersionStorage;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -15,44 +16,36 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.zip.ZipInputStream;
+
+import static com.boriselec.morphdict.storage.VersionStorage.VERSION_FORMAT;
 
 public class DictLoader {
     private static final String OPEN_CORPORA_PAGE = "http://opencorpora.org/?page=downloads";
     private static final String DICT_DOWNLOAD = "http://opencorpora.org/files/export/dict/dict.opcorpora.xml.zip";
 
-    private static final Path VERSION_PROPERTY = Paths.get("C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\.dictversion");
     private static final String TEMP_ZIP = "C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\dict.opcorpora.xml.zip";
 
-    static final DateTimeFormatter VERSION_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm zzz");
-
     private final Path destinationPath;
+    private final VersionStorage versionStorage;
 
-    public DictLoader(String destinationPath) {
+    public DictLoader(String destinationPath, VersionStorage versionStorage) {
         this.destinationPath = Paths.get(destinationPath);
+        this.versionStorage = versionStorage;
     }
 
     public void ensureLastVersion() throws IOException {
-        ZonedDateTime localVersion = getLocalVersion();
+        ZonedDateTime localVersion = versionStorage.get();
         ZonedDateTime currentVersion = getCurrentVersion();
 
         if (!Files.exists(destinationPath) || !currentVersion.equals(localVersion)) {
             deleteOld();
             load();
             unzip();
-            updateLocalVersion(currentVersion);
+            versionStorage.update(currentVersion);
         }
-    }
-
-    private ZonedDateTime getLocalVersion() throws IOException {
-        if (!Files.exists(VERSION_PROPERTY)) {
-            return null;
-        }
-        String currentVersion = String.join("", Files.readAllLines(VERSION_PROPERTY));
-        return ZonedDateTime.parse(currentVersion, VERSION_FORMAT);
     }
 
     private ZonedDateTime getCurrentVersion() throws IOException {
@@ -102,13 +95,5 @@ public class DictLoader {
         } finally {
             Files.delete(Paths.get(TEMP_ZIP));
         }
-    }
-
-    private void updateLocalVersion(ZonedDateTime currentVersion) throws IOException {
-        if (Files.exists(VERSION_PROPERTY)) {
-            Files.delete(VERSION_PROPERTY);
-        }
-        String version = VERSION_FORMAT.format(currentVersion);
-        Files.write(VERSION_PROPERTY, version.getBytes());
     }
 }
