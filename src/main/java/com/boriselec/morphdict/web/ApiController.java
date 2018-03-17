@@ -29,12 +29,19 @@ public class ApiController {
      *  "id":1
      * }]
      */
-    @RequestMapping(value = "/getLemma", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    @RequestMapping(value = "/lemma", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public String getLemma(
         @RequestParam(value = "from") int from,
         @RequestParam(value = "to") int to)
     {
         List<Lemma> lemmata = dao.get(from, to, s -> gson.fromJson(s, Lemma.class));
         return gson.toJson(lemmata, new TypeToken<List<Lemma>>(){}.getType());
+    }
+
+    @RequestMapping(value = "/lemma", method = RequestMethod.DELETE)
+    public void deleteLemma(
+        @RequestParam(value = "id") int id)
+    {
+        dao.delete(id);
     }
 }
