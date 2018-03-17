@@ -66,16 +66,15 @@ public class LemmaDao {
     }
 
     public void insert(String json, String text, int id, int revision, LemmaState state) {
-        jdbi.withHandle(handle -> {
-                return handle.createUpdate("INSERT INTO LEMMA (TEXT, JSON, ID, REVISION, STATE) " +
-                    "VALUES (:text, :json, :id, :revision, :state)")
-                    .bind("text", text)
-                    .bind("json", json)
-                    .bind("id", id)
-                    .bind("revision", revision)
-                    .bind("state", state.getCode())
-                    .execute();
-            }
+        jdbi.withHandle(handle ->
+            handle.createUpdate("INSERT INTO LEMMA (TEXT, JSON, ID, REVISION, STATE) " +
+                "VALUES (:text, :json, :id, :revision, :state)")
+                .bind("text", text)
+                .bind("json", json)
+                .bind("id", id)
+                .bind("revision", revision)
+                .bind("state", state.getCode())
+                .execute()
         );
     }
 
