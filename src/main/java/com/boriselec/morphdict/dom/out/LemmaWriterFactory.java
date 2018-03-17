@@ -1,7 +1,9 @@
 package com.boriselec.morphdict.dom.out;
 
 import com.boriselec.morphdict.dom.data.Lemma;
+import com.boriselec.morphdict.storage.sql.DatabaseLemmaWriter;
 import com.google.gson.Gson;
+import org.jdbi.v3.core.Jdbi;
 
 import javax.xml.bind.Marshaller;
 import java.io.FileNotFoundException;
@@ -23,7 +25,11 @@ public class LemmaWriterFactory {
         return new XmlLemmaWriter(marshaller, path);
     }
 
-    public LemmaWriter createConsoleProgressWriter(String path) {
+    public LemmaWriter createDatabaseWriter(Jdbi jdbi, Gson gson) {
+        return new DatabaseLemmaWriter(jdbi, gson);
+    }
+
+    public LemmaWriter createConsoleProgressWriter() {
         return new LemmaWriter() {
             private int count = 0;
             @Override

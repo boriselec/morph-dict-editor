@@ -6,6 +6,7 @@ import com.boriselec.morphdict.dom.out.LemmaWriter;
 import com.boriselec.morphdict.dom.out.LemmaWriterFactory;
 import com.boriselec.morphdict.load.DictLoader;
 import com.boriselec.morphdict.storage.VersionStorage;
+import com.boriselec.morphdict.storage.sql.CompositeLemmaWriter;
 import com.boriselec.morphdict.storage.sql.VersionDao;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -17,9 +18,8 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
-import java.util.Optional;
 
 public class DomApp {
     public static void main(String[] args) throws IOException, ParserConfigurationException, JAXBException {
@@ -40,7 +40,7 @@ public class DomApp {
             .addForm("лайтово")
             .build();
 
-        Iterator<Lemma> predefined = Arrays.asList(newLemma).iterator();
+        Iterator<Lemma> predefined = Collections.<Lemma>emptyList().iterator();
 
         LemmaTransformer transformer = new ChainLemmaTransformer(
             new BlackListTextLemmaFilter("ёж"),
@@ -56,11 +56,13 @@ public class DomApp {
 
         try (
             LemmaReader in = new LemmaReader(unmarshaller, dict, predefined);
-            LemmaWriter out = writerFactory.createJsonWriter("C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\dict.opcorpora.filtered");
+            LemmaWriter out = new CompositeLemmaWriter(
+                writerFactory.createDatabaseWriter(jdbi, gson),
+                writerFactory.createConsoleProgressWriter()
+            )
         ) {
             for (Lemma lemma : in) {
-                Optional<Lemma> transformed = transformer.transform(lemma);
-                transformed.ifPresent(out::write);
+                out.write(lemma);
             }
         }
     }
