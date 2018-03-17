@@ -31,7 +31,11 @@ public class ApiController {
         @RequestParam(value = "from") int from,
         @RequestParam(value = "to") int to)
     {
-        List<Lemma> lemmata = dao.get(from, to, s -> gson.fromJson(s, Lemma.class));
+        List<Lemma> lemmata = dao.get(from, to, (id, s) -> {
+            Lemma lemma = gson.fromJson(s, Lemma.class);
+            lemma.id = id;
+            return lemma;
+        });
         return gson.toJson(lemmata, new TypeToken<List<Lemma>>(){}.getType());
     }
 
