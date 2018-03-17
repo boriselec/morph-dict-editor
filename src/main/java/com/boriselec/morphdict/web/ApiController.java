@@ -22,6 +22,13 @@ public class ApiController {
         this.gson = gson;
     }
 
+    /**
+     * [{
+     *  "l":{"t":"ёж","g":[...]},
+     *  "f":[...],
+     *  "id":1
+     * }]
+     */
     @RequestMapping(value = "/getLemma", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public String getLemma(
         @RequestParam(value = "from") int from,

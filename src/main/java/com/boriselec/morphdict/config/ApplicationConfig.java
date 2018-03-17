@@ -1,6 +1,7 @@
 package com.boriselec.morphdict.config;
 
 import com.boriselec.morphdict.Application;
+import com.boriselec.morphdict.dom.data.LemmaViewExclusionStrategy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.jdbi.v3.core.Jdbi;
@@ -19,7 +20,7 @@ public class ApplicationConfig {
     @Bean
     Gson gson() {
         return new GsonBuilder()
-            .excludeFieldsWithoutExposeAnnotation()
+            .setExclusionStrategies(new LemmaViewExclusionStrategy())
             .create();
     }
 }
