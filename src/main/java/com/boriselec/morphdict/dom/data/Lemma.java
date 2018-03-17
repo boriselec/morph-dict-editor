@@ -2,6 +2,7 @@ package com.boriselec.morphdict.dom.data;
 
 import com.google.gson.annotations.SerializedName;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.*;
@@ -29,6 +30,12 @@ public class Lemma {
     @XmlElement(name = "f")
     @SerializedName("f")
     public List<WordForm> wordForms;
+    @XmlAttribute(name = "id")
+    public Integer id;
+    @XmlAttribute(name = "rev")
+    public Integer revision;
+
+    public LemmaState state;
 
     public Lemma() {
     }
@@ -36,6 +43,7 @@ public class Lemma {
     private Lemma(WordForm lemmaForm, List<WordForm> wordForms) {
         this.lemmaForm = Objects.requireNonNull(lemmaForm);
         this.wordForms = Objects.requireNonNull(wordForms);
+        this.state = LemmaState.MANUAL;
     }
 
     public static final class Builder {
