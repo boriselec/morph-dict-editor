@@ -4,7 +4,6 @@ import com.boriselec.morphdict.storage.VersionStorage;
 import org.jdbi.v3.core.Jdbi;
 
 import java.time.ZonedDateTime;
-import java.util.Optional;
 
 /**
  * Stores version in database
@@ -18,17 +17,12 @@ public class VersionDao implements VersionStorage {
 
     @Override
     public ZonedDateTime get() {
-        Optional<String> value = jdbi.withHandle(handle ->
+        return jdbi.withHandle(handle ->
             handle.createQuery("SELECT VALUE FROM DICTIONARY_VERSION")
                 .mapTo(String.class)
-                .findFirst()
-        );
-
-        if (value.isPresent()) {
-            return ZonedDateTime.parse(value.get(), VERSION_FORMAT);
-        } else {
-            return null;
-        }
+                .findFirst())
+            .map(s -> ZonedDateTime.parse(s, VERSION_FORMAT))
+            .orElse(null);
     }
 
     @Override
