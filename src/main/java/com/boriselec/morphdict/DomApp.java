@@ -55,7 +55,7 @@ public class DomApp {
         loader.ensureLastVersion();
 
         try (
-            LemmaReader in = new LemmaReader(unmarshaller, dict, predefined);
+            FileLemmaReader in = new FileLemmaReader(unmarshaller, dict);
             LemmaWriter out = new CompositeLemmaWriter(
                 writerFactory.createDatabaseWriter(jdbi, gson),
                 writerFactory.createConsoleProgressWriter()

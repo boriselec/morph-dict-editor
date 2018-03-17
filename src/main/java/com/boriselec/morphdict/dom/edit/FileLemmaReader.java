@@ -13,16 +13,14 @@ import java.util.NoSuchElementException;
 /**
  * Parse and iterate lemmas through input
  */
-public class LemmaReader implements Iterator<Lemma>, Iterable<Lemma>, AutoCloseable {
+public class FileLemmaReader implements Iterator<Lemma>, Iterable<Lemma>, AutoCloseable {
     private final Unmarshaller unmarshaller;
     private final BufferedReader reader;
-    private final Iterator<Lemma> predefined;
     private Lemma current;
 
-    public LemmaReader(Unmarshaller unmarshaller, String path, Iterator<Lemma> predefined) throws FileNotFoundException {
+    public FileLemmaReader(Unmarshaller unmarshaller, String path) throws FileNotFoundException {
         this.unmarshaller = unmarshaller;
         reader = new BufferedReader(new FileReader(path));
-        this.predefined = predefined;
     }
 
     @Override
@@ -55,9 +53,6 @@ public class LemmaReader implements Iterator<Lemma>, Iterable<Lemma>, AutoClosea
         if (current == null) {
             current = parse();
         }
-        if (current == null) {
-            current = readPredefined();
-        }
     }
 
     private Lemma parse() {
@@ -83,9 +78,5 @@ public class LemmaReader implements Iterator<Lemma>, Iterable<Lemma>, AutoClosea
 
     private boolean isLemma(String line) {
         return line.contains("<lemma ");
-    }
-
-    private Lemma readPredefined() {
-        return predefined.hasNext() ? predefined.next() : null;
     }
 }
