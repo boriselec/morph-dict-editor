@@ -66,7 +66,15 @@ public class LemmaDao {
         );
     }
 
-    public void insert(String json, String text, int id, int revision, LemmaState state) {
+    public int total() {
+        return jdbi.withHandle(handle ->
+            handle.createQuery("SELECT COUNT(*) FROM LEMMA")
+                .mapTo(Integer.class)
+                .findOnly()
+        );
+    }
+
+    private void insert(String json, String text, int id, int revision, LemmaState state) {
         RetryConnection.retry(jdbi, handle ->
             handle.createUpdate("INSERT INTO LEMMA (TEXT, JSON, ID, REVISION, STATE) " +
                 "VALUES (:text, :json, :id, :revision, :state)")
