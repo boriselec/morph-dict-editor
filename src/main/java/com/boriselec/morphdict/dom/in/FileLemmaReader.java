@@ -18,9 +18,13 @@ public class FileLemmaReader implements LemmaReader {
     private final BufferedReader reader;
     private Lemma current;
 
-    public FileLemmaReader(Unmarshaller unmarshaller, String path) throws FileNotFoundException {
-        this.unmarshaller = unmarshaller;
-        reader = new BufferedReader(new FileReader(path));
+    public FileLemmaReader(Unmarshaller unmarshaller, String path) {
+        try {
+            this.unmarshaller = unmarshaller;
+            reader = new BufferedReader(new FileReader(path));
+        } catch (FileNotFoundException e) {
+            throw new IllegalStateException(e.getMessage(), e);
+        }
     }
 
     @Override
@@ -45,8 +49,12 @@ public class FileLemmaReader implements LemmaReader {
         return this;
     }
 
-    public void close() throws IOException {
-        reader.close();
+    public void close() {
+        try {
+            reader.close();
+        } catch (IOException e) {
+            throw new IllegalStateException(e.getMessage(), e);
+        }
     }
 
     private void ensureCurrent() {

@@ -50,6 +50,6 @@ public class DatabaseLemmaReader implements LemmaReader {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
     }
 }
