@@ -4,6 +4,8 @@ import com.boriselec.morphdict.storage.VersionStorage;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
@@ -22,6 +24,7 @@ import java.util.zip.ZipInputStream;
 
 import static com.boriselec.morphdict.storage.VersionStorage.VERSION_FORMAT;
 
+@Component
 public class DictLoader {
     private static final String OPEN_CORPORA_PAGE = "http://opencorpora.org/?page=downloads";
     private static final String DICT_DOWNLOAD = "http://opencorpora.org/files/export/dict/dict.opcorpora.xml.zip";
@@ -31,20 +34,24 @@ public class DictLoader {
     private final Path destinationPath;
     private final VersionStorage versionStorage;
 
-    public DictLoader(String destinationPath, VersionStorage versionStorage) {
+    public DictLoader(@Value("${opencorpora.xml.path}") String destinationPath, VersionStorage versionStorage) {
         this.destinationPath = Paths.get(destinationPath);
         this.versionStorage = versionStorage;
     }
 
-    public void ensureLastVersion() throws IOException {
-        ZonedDateTime localVersion = versionStorage.get();
-        ZonedDateTime currentVersion = getCurrentVersion();
+    public void ensureLastVersion() {
+        try {
+            ZonedDateTime localVersion = versionStorage.get();
+            ZonedDateTime currentVersion = getCurrentVersion();
 
-        if (!Files.exists(destinationPath) || !currentVersion.equals(localVersion)) {
-            deleteOld();
-            load();
-            unzip();
-            versionStorage.update(currentVersion);
+            if (!Files.exists(destinationPath) || !currentVersion.equals(localVersion)) {
+                deleteOld();
+                load();
+                unzip();
+                versionStorage.update(currentVersion);
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException(e.getMessage(), e);
         }
     }
 

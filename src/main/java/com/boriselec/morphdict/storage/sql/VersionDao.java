@@ -2,12 +2,14 @@ package com.boriselec.morphdict.storage.sql;
 
 import com.boriselec.morphdict.storage.VersionStorage;
 import org.jdbi.v3.core.Jdbi;
+import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
 
 /**
  * Stores version in database
  */
+@Component
 public class VersionDao implements VersionStorage {
     private final Jdbi jdbi;
 
