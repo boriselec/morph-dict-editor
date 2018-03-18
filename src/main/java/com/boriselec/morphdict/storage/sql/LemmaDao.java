@@ -2,6 +2,7 @@ package com.boriselec.morphdict.storage.sql;
 
 import com.boriselec.morphdict.dom.data.Lemma;
 import com.boriselec.morphdict.dom.data.LemmaState;
+import com.boriselec.morphdict.dom.out.RetryConnection;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.stereotype.Component;
 
@@ -20,11 +21,11 @@ public class LemmaDao {
         this.jdbi = jdbi;
     }
 
-    public List<Lemma> get(int from, int to, BiFunction<Integer, String, Lemma> deserializer) {
+    public List<Lemma> get(int offset, int limit, BiFunction<Integer, String, Lemma> deserializer) {
         return jdbi.withHandle(handle ->
-            handle.createQuery("SELECT ID, JSON FROM LEMMA WHERE ROWNUM BETWEEN :from AND :to")
-                .bind("from", from)
-                .bind("to", to)
+            handle.createQuery("SELECT ID, JSON FROM LEMMA ORDER BY ID LIMIT :limit OFFSET :offset")
+                .bind("limit", limit)
+                .bind("offset", offset)
                 .map((rs, ctx) -> deserializer.apply(rs.getInt("ID"), rs.getString("JSON")))
                 .list()
         );
@@ -39,7 +40,7 @@ public class LemmaDao {
     }
 
     public Optional<Integer> getRevision(int id) {
-        return jdbi.withHandle(handle ->
+        return RetryConnection.retry(jdbi, handle ->
             handle.select("SELECT REVISION FROM LEMMA WHERE ID = :id")
                 .bind("id", id)
                 .mapTo(Integer.class)
@@ -66,7 +67,7 @@ public class LemmaDao {
     }
 
     public void insert(String json, String text, int id, int revision, LemmaState state) {
-        jdbi.withHandle(handle ->
+        RetryConnection.retry(jdbi, handle ->
             handle.createUpdate("INSERT INTO LEMMA (TEXT, JSON, ID, REVISION, STATE) " +
                 "VALUES (:text, :json, :id, :revision, :state)")
                 .bind("text", text)

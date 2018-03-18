@@ -46,7 +46,7 @@ public class DomApp {
             new DigitLemmaFilter()
         );
 
-        Jdbi jdbi = Jdbi.create("jdbc:h2:file:C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\db");
+        Jdbi jdbi = Jdbi.create("jdbc:mysql://localhost:3306/dict?user=root&password=admin");
         VersionStorage versionStorage = new VersionDao(jdbi);
 
         LemmaDao lemmaDao = new LemmaDao(jdbi);
