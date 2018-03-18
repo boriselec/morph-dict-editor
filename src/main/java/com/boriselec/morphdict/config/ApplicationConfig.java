@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 public class ApplicationConfig {
     @Bean
     public Jdbi jdbi() {
-        return Jdbi.create("jdbc:h2:file:C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\db");
+        return Jdbi.create("jdbc:mysql://localhost:3306/dict?user=root&password=admin");
     }
 
     @Bean
