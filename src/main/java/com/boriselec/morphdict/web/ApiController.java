@@ -24,7 +24,7 @@ public class ApiController {
      * {"meta": {
      *  "total": 200
      * },
-     * "comments": [{
+     * "lemmata": [{
      *  "l":{"t":"ёж","g":[...]},
      *  "f":[...],
      *  "id":1
