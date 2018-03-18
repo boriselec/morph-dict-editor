@@ -28,10 +28,10 @@ public class ApiController {
      */
     @RequestMapping(value = "/lemma", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
     public String getLemma(
-        @RequestParam(value = "from") int from,
-        @RequestParam(value = "to") int to)
+        @RequestParam(value = "offset") int offset,
+        @RequestParam(value = "limit") int limit)
     {
-        List<Lemma> lemmata = dao.get(from, to, (id, s) -> {
+        List<Lemma> lemmata = dao.get(offset, limit, (id, s) -> {
             Lemma lemma = gson.fromJson(s, Lemma.class);
             lemma.id = id;
             return lemma;
