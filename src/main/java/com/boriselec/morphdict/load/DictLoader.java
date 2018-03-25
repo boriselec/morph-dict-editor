@@ -29,13 +29,15 @@ public class DictLoader {
     private static final String OPEN_CORPORA_PAGE = "http://opencorpora.org/?page=downloads";
     private static final String DICT_DOWNLOAD = "http://opencorpora.org/files/export/dict/dict.opcorpora.xml.zip";
 
-    private static final String TEMP_ZIP = "C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\dict.opcorpora.xml.zip";
-
     private final Path destinationPath;
+    private final String tempZipPath;
     private final VersionStorage versionStorage;
 
-    public DictLoader(@Value("${opencorpora.xml.path}") String destinationPath, VersionStorage versionStorage) {
+    public DictLoader(@Value("${opencorpora.xml.path}") String destinationPath,
+                      @Value("${temp.zip.path}") String tempZipPath,
+                      VersionStorage versionStorage) {
         this.destinationPath = Paths.get(destinationPath);
+        this.tempZipPath = tempZipPath;
         this.versionStorage = versionStorage;
     }
 
@@ -86,7 +88,7 @@ public class DictLoader {
         URL downloadUrl = new URL(DICT_DOWNLOAD);
         try (
             ReadableByteChannel rbc = Channels.newChannel(downloadUrl.openStream());
-            FileOutputStream fos = new FileOutputStream(TEMP_ZIP);
+            FileOutputStream fos = new FileOutputStream(tempZipPath);
         ) {
             fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
         }
@@ -94,13 +96,13 @@ public class DictLoader {
 
     private void unzip() throws IOException {
         try (
-            ZipInputStream zipInputStream = new ZipInputStream(new BufferedInputStream(new FileInputStream(TEMP_ZIP)));
+            ZipInputStream zipInputStream = new ZipInputStream(new BufferedInputStream(new FileInputStream(tempZipPath)));
             FileOutputStream unpack = new FileOutputStream(destinationPath.toFile());
         ) {
             zipInputStream.getNextEntry();
             unpack.getChannel().transferFrom(Channels.newChannel(zipInputStream), 0, Long.MAX_VALUE);
         } finally {
-            Files.delete(Paths.get(TEMP_ZIP));
+            Files.delete(Paths.get(tempZipPath));
         }
     }
 }
