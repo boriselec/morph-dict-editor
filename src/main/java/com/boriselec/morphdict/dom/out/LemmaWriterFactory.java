@@ -24,8 +24,8 @@ public class LemmaWriterFactory {
         return new XmlLemmaWriter(marshaller, path);
     }
 
-    public LemmaWriter createDatabaseWriter(LemmaDao dao, Gson gson) {
-        return new DatabaseLemmaWriter(dao, gson);
+    public LemmaWriter createDatabaseWriter(LemmaDao dao) {
+        return new DatabaseLemmaWriter(dao);
     }
 
     public LemmaWriter createConsoleProgressWriter() {

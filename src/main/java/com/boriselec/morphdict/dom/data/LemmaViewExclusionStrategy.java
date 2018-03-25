@@ -5,12 +5,14 @@ import com.google.gson.FieldAttributes;
 import com.google.gson.annotations.Expose;
 
 /**
- * Do no skip id for rest api
+ * Do no skip id and state for rest api
  */
 public class LemmaViewExclusionStrategy implements ExclusionStrategy {
     @Override
     public boolean shouldSkipField(FieldAttributes fieldAttributes) {
-        return fieldAttributes.getAnnotation(Expose.class) == null && !"id".equals(fieldAttributes.getName());
+        return fieldAttributes.getAnnotation(Expose.class) == null
+            && !"id".equals(fieldAttributes.getName())
+            && !"state".equals(fieldAttributes.getName());
     }
 
     @Override

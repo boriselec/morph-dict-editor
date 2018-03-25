@@ -2,10 +2,6 @@ package com.boriselec.morphdict.config;
 
 import com.boriselec.morphdict.Application;
 import com.boriselec.morphdict.dom.data.Lemma;
-import com.boriselec.morphdict.dom.data.LemmaViewExclusionStrategy;
-import com.boriselec.morphdict.dom.out.DatabaseLemmaWriter;
-import com.boriselec.morphdict.dom.out.LemmaWriter;
-import com.boriselec.morphdict.storage.sql.LemmaDao;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.jdbi.v3.core.Jdbi;
@@ -29,9 +25,9 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public Gson gson() {
+    public Gson internal() {
         return new GsonBuilder()
-            .setExclusionStrategies(new LemmaViewExclusionStrategy())
+            .excludeFieldsWithoutExposeAnnotation()
             .create();
     }
 
@@ -44,15 +40,5 @@ public class ApplicationConfig {
     public Unmarshaller lemmaUnmarshaller() throws JAXBException {
         JAXBContext jaxbContext = JAXBContext.newInstance(Lemma.class);
         return jaxbContext.createUnmarshaller();
-    }
-
-    @Bean
-    public LemmaDao lemmaDao(Jdbi jdbi) {
-        return new LemmaDao(jdbi);
-    }
-
-    @Bean
-    public LemmaWriter dbLemmaWriter(LemmaDao lemmaDao, Gson gson) {
-        return new DatabaseLemmaWriter(lemmaDao, gson);
     }
 }

@@ -2,20 +2,19 @@ package com.boriselec.morphdict.dom.out;
 
 import com.boriselec.morphdict.dom.data.Lemma;
 import com.boriselec.morphdict.storage.sql.LemmaDao;
-import com.google.gson.Gson;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 /**
  * Loads lemmas into database
  */
+@Component
 public class DatabaseLemmaWriter implements LemmaWriter {
     private final LemmaDao dao;
-    private final Gson gson;
 
-    public DatabaseLemmaWriter(LemmaDao dao, Gson gson) {
+    public DatabaseLemmaWriter(LemmaDao dao) {
         this.dao = dao;
-        this.gson = gson;
     }
 
     @Override
@@ -31,8 +30,7 @@ public class DatabaseLemmaWriter implements LemmaWriter {
             }
         }
 
-        String json = gson.toJson(lemma);
-        dao.insertFromCorpora(json, lemma);
+        dao.insertFromCorpora(lemma);
     }
 
     @Override
