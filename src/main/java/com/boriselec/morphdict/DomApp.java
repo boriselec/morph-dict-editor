@@ -57,7 +57,7 @@ public class DomApp {
         loader.ensureLastVersion();
 
         try (
-            LemmaReader in = new DatabaseLemmaReader(lemmaDao, gson);
+            LemmaReader in = new DatabaseLemmaReader(lemmaDao);
             LemmaWriter out = new CompositeLemmaWriter(
                 writerFactory.createJsonWriter("C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\dict.opcorpora.filtered"),
                 writerFactory.createConsoleProgressWriter()
