@@ -38,8 +38,9 @@ public class LemmaDao {
 
     public void delete(int id) {
         jdbi.withHandle(handle ->
-            handle.createUpdate("DELETE FROM LEMMA WHERE ID = :id")
+            handle.createUpdate("UPDATE LEMMA SET STATE = :state WHERE ID = :id")
                 .bind("id", id)
+                .bind("state", LemmaState.DELETED.getCode())
                 .execute()
         );
     }
