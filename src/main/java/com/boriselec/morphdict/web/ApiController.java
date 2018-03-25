@@ -29,13 +29,26 @@ public class ApiController {
      *  "state":"0"
      * }]
      */
-    @RequestMapping(value = "/lemma", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @RequestMapping(value = "/lemma", params = {"offset", "limit"}, method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public LemmaView getLemma(
         @RequestParam(value = "offset") int offset,
         @RequestParam(value = "limit") int limit)
     {
         List<Lemma> lemmata = dao.get(offset, limit);
         int total = dao.total();
+        return new LemmaView(lemmata, total);
+    }
+
+    @RequestMapping(value = "/lemma", params = {"text", "offset", "limit"}, method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public LemmaView searchLemma(
+        @RequestParam(value = "text") String text,
+        @RequestParam(value = "offset") int offset,
+        @RequestParam(value = "limit") int limit)
+    {
+        List<Lemma> lemmata = dao.search(text, offset, limit);
+        int total = dao.totalSearch(text);
         return new LemmaView(lemmata, total);
     }
 

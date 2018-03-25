@@ -36,6 +36,20 @@ public class LemmaDao {
         );
     }
 
+    public List<Lemma> search(String text, int offset, int limit) {
+        return jdbi.withHandle(handle ->
+            handle.createQuery(
+                "SELECT * FROM LEMMA " +
+                    "WHERE TEXT LIKE CONCAT('%', :text, '%') " +
+                    "ORDER BY ID LIMIT :limit OFFSET :offset")
+                .bind("text", text)
+                .bind("limit", limit)
+                .bind("offset", offset)
+                .map((rs, ctx) -> deserialize(rs))
+                .list()
+        );
+    }
+
     public void delete(int id) {
         jdbi.withHandle(handle ->
             handle.createUpdate("UPDATE LEMMA SET STATE = :state WHERE ID = :id")
@@ -77,6 +91,15 @@ public class LemmaDao {
     public int total() {
         return jdbi.withHandle(handle ->
             handle.createQuery("SELECT COUNT(*) FROM LEMMA")
+                .mapTo(Integer.class)
+                .findOnly()
+        );
+    }
+
+    public int totalSearch(String text) {
+        return jdbi.withHandle(handle ->
+            handle.createQuery("SELECT COUNT(*) FROM LEMMA WHERE TEXT LIKE CONCAT('%', :text, '%')")
+                .bind("text", text)
                 .mapTo(Integer.class)
                 .findOnly()
         );
