@@ -46,7 +46,7 @@ public class DomApp {
             new DigitLemmaFilter()
         );
 
-        Jdbi jdbi = Jdbi.create("jdbc:mysql://localhost:3306/dict?user=root&password=admin");
+        Jdbi jdbi = Jdbi.create("jdbc:mysql://localhost:3306/dict", "root", "admin");
         VersionStorage versionStorage = new VersionDao(jdbi);
 
         LemmaDao lemmaDao = new LemmaDao(jdbi, gson);
