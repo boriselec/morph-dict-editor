@@ -3,7 +3,6 @@ package com.boriselec.morphdict.dom.in;
 import com.boriselec.morphdict.dom.data.Lemma;
 import com.boriselec.morphdict.dom.edit.LemmaReader;
 import com.boriselec.morphdict.storage.sql.LemmaDao;
-import com.google.gson.Gson;
 
 import java.util.Iterator;
 import java.util.List;
@@ -11,13 +10,11 @@ import java.util.List;
 public class DatabaseLemmaReader implements LemmaReader {
     private static final int BATCH_SIZE = 1000;
     private final LemmaDao dao;
-    private final Gson gson;
     private Iterator<Lemma> currentBatch;
     private int cursor = 0;
 
-    public DatabaseLemmaReader(LemmaDao dao, Gson gson) {
+    public DatabaseLemmaReader(LemmaDao dao) {
         this.dao = dao;
-        this.gson = gson;
     }
 
     @Override
