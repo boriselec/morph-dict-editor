@@ -5,6 +5,7 @@ import com.boriselec.morphdict.dom.data.Lemma;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.jdbi.v3.core.Jdbi;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -20,8 +21,9 @@ import javax.xml.bind.Unmarshaller;
 @PropertySource(value = "classpath:application.properties")
 public class ApplicationConfig {
     @Bean
-    public Jdbi jdbi() {
-        return Jdbi.create("jdbc:mysql://localhost:3306/dict?user=root&password=admin");
+    public Jdbi jdbi(@Value("${db.username}") String username,
+                     @Value("${db.password}") String password) {
+        return Jdbi.create("jdbc:mysql://localhost:3306/dict", username, password);
     }
 
     @Bean
