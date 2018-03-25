@@ -39,7 +39,7 @@ public class DatabaseLemmaReader implements LemmaReader {
     }
 
     private Iterator<Lemma> fetch() {
-        List<Lemma> lemmata = dao.get(cursor, BATCH_SIZE, (id, s) -> gson.fromJson(s, Lemma.class));
+        List<Lemma> lemmata = dao.get(cursor, BATCH_SIZE);
         cursor += BATCH_SIZE;
         return lemmata.iterator();
     }

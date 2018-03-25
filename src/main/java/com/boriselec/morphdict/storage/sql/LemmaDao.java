@@ -3,12 +3,15 @@ package com.boriselec.morphdict.storage.sql;
 import com.boriselec.morphdict.dom.data.Lemma;
 import com.boriselec.morphdict.dom.data.LemmaState;
 import com.boriselec.morphdict.dom.out.RetryConnection;
+import com.google.gson.Gson;
 import org.jdbi.v3.core.Jdbi;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiFunction;
 
 import static java.util.Objects.requireNonNull;
 
@@ -16,17 +19,19 @@ import static java.util.Objects.requireNonNull;
 public class LemmaDao {
     private static final int NO_REVISION = -1;
     private final Jdbi jdbi;
+    private final Gson gson;
 
-    public LemmaDao(Jdbi jdbi) {
+    public LemmaDao(Jdbi jdbi, @Qualifier("internal") Gson gson) {
         this.jdbi = jdbi;
+        this.gson = gson;
     }
 
-    public List<Lemma> get(int offset, int limit, BiFunction<Integer, String, Lemma> deserializer) {
+    public List<Lemma> get(int offset, int limit) {
         return jdbi.withHandle(handle ->
-            handle.createQuery("SELECT ID, JSON FROM LEMMA ORDER BY ID LIMIT :limit OFFSET :offset")
+            handle.createQuery("SELECT * FROM LEMMA ORDER BY ID LIMIT :limit OFFSET :offset")
                 .bind("limit", limit)
                 .bind("offset", offset)
-                .map((rs, ctx) -> deserializer.apply(rs.getInt("ID"), rs.getString("JSON")))
+                .map((rs, ctx) -> deserialize(rs))
                 .list()
         );
     }
@@ -48,7 +53,8 @@ public class LemmaDao {
         );
     }
 
-    public void insertFromCorpora(String json, Lemma lemma) {
+    public void insertFromCorpora(Lemma lemma) {
+        String json = gson.toJson(lemma);
         insert(json,
             lemma.lemmaForm.text,
             requireNonNull(lemma.id),
@@ -57,9 +63,10 @@ public class LemmaDao {
         );
     }
 
-    public void insertNew(String json, String text) {
+    public void insertNew(String json) {
+        Lemma lemma = gson.fromJson(json, Lemma.class);
         insert(json,
-            text,
+            lemma.lemmaForm.text,
             generateId(),
             NO_REVISION,
             LemmaState.MANUAL
@@ -93,5 +100,13 @@ public class LemmaDao {
                 .mapTo(Integer.class)
                 .findOnly()
         );
+    }
+
+    private Lemma deserialize(ResultSet rs) throws SQLException {
+        Lemma lemma = gson.fromJson(rs.getString("JSON"), Lemma.class);
+        lemma.id = rs.getInt("ID");
+        lemma.state = LemmaState.fromCode(rs.getInt("STATE"));
+        lemma.revision = rs.getInt("REVISION");
+        return lemma;
     }
 }

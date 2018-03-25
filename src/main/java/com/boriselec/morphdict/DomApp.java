@@ -49,7 +49,7 @@ public class DomApp {
         Jdbi jdbi = Jdbi.create("jdbc:mysql://localhost:3306/dict?user=root&password=admin");
         VersionStorage versionStorage = new VersionDao(jdbi);
 
-        LemmaDao lemmaDao = new LemmaDao(jdbi);
+        LemmaDao lemmaDao = new LemmaDao(jdbi, gson);
 
         String dict = "C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\dict.opcorpora.xml";
         DictLoader loader = new DictLoader(dict, versionStorage);
