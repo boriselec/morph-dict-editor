@@ -52,7 +52,8 @@ public class DomApp {
         LemmaDao lemmaDao = new LemmaDao(jdbi, gson);
 
         String dict = "C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\dict.opcorpora.xml";
-        DictLoader loader = new DictLoader(dict, versionStorage);
+        String zip = "C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\dict.opcorpora.xml.zip";
+        DictLoader loader = new DictLoader(dict, zip, versionStorage);
         loader.ensureLastVersion();
 
         try (
