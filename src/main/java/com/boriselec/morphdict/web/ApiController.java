@@ -6,7 +6,6 @@ import com.boriselec.morphdict.web.view.LemmaView;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController("/api")
@@ -29,6 +28,7 @@ public class ApiController {
      *  "state":"0"
      * }]
      */
+    @CrossOrigin
     @RequestMapping(value = "/lemma", params = {"offset", "limit"}, method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public LemmaView getLemma(
@@ -40,6 +40,7 @@ public class ApiController {
         return new LemmaView(lemmata, total);
     }
 
+    @CrossOrigin
     @RequestMapping(value = "/lemma", params = {"text", "offset", "limit"}, method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public LemmaView searchLemma(
@@ -52,6 +53,7 @@ public class ApiController {
         return new LemmaView(lemmata, total);
     }
 
+    @CrossOrigin
     @RequestMapping(value = "/lemma", method = RequestMethod.DELETE)
     public void deleteLemma(
         @RequestParam(value = "id") int id)
@@ -59,17 +61,11 @@ public class ApiController {
         dao.delete(id);
     }
 
+    @CrossOrigin
     @RequestMapping(value = "/lemma", method = RequestMethod.POST, consumes = MediaType.TEXT_PLAIN_VALUE)
     public void postLemma(
         @RequestBody String json)
     {
         dao.insertNew(json);
-    }
-
-    @ModelAttribute
-    public void setVaryResponseHeader(HttpServletResponse response) {
-        //bad practice, see CORS
-        response.setHeader("Access-Control-Allow-Credentials", "true");
-        response.setHeader("Access-Control-Allow-Origin", "*");
     }
 }
