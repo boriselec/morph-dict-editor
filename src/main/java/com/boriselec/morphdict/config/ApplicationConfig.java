@@ -21,9 +21,10 @@ import javax.xml.bind.Unmarshaller;
 @PropertySource(value = "classpath:application.properties")
 public class ApplicationConfig {
     @Bean
-    public Jdbi jdbi(@Value("${db.username}") String username,
+    public Jdbi jdbi(@Value("${db.url}") String url,
+                     @Value("${db.username}") String username,
                      @Value("${db.password}") String password) {
-        return Jdbi.create("jdbc:mysql://localhost:3306/dict", username, password);
+        return Jdbi.create(url, username, password);
     }
 
     @Bean
