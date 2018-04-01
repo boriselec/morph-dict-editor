@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController("/api")
-@RequestMapping("/api")
-public class ApiController {
+@RestController("/api/lemma")
+@RequestMapping("/api/lemma")
+public class LemmaController {
     private final LemmaDao dao;
 
-    public ApiController(LemmaDao dao) {
+    public LemmaController(LemmaDao dao) {
         this.dao = dao;
     }
 
@@ -29,7 +29,7 @@ public class ApiController {
      * }]
      */
     @CrossOrigin
-    @RequestMapping(value = "/lemma", params = {"offset", "limit"}, method = RequestMethod.GET,
+    @RequestMapping(params = {"offset", "limit"}, method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public LemmaView getLemma(
         @RequestParam(value = "offset") int offset,
@@ -41,7 +41,7 @@ public class ApiController {
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/lemma", params = {"text", "offset", "limit"}, method = RequestMethod.GET,
+    @RequestMapping(params = {"text", "offset", "limit"}, method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public LemmaView searchLemma(
         @RequestParam(value = "text") String text,
@@ -54,7 +54,7 @@ public class ApiController {
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/lemma", method = RequestMethod.DELETE)
+    @RequestMapping(method = RequestMethod.DELETE)
     public void deleteLemma(
         @RequestParam(value = "id") int id)
     {
@@ -62,7 +62,7 @@ public class ApiController {
     }
 
     @CrossOrigin
-    @RequestMapping(value = "/lemma", method = RequestMethod.POST, consumes = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.TEXT_PLAIN_VALUE)
     public void postLemma(
         @RequestBody String json)
     {
