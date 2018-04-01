@@ -3,8 +3,10 @@ package com.boriselec.morphdict.web;
 import com.boriselec.morphdict.dom.data.Lemma;
 import com.boriselec.morphdict.dom.edit.LemmaReader;
 import com.boriselec.morphdict.dom.in.FileLemmaReader;
+import com.boriselec.morphdict.dom.out.CompositeLemmaWriter;
 import com.boriselec.morphdict.dom.out.LemmaWriter;
 import com.boriselec.morphdict.load.DictLoader;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -25,11 +27,12 @@ public class AdminController {
     private final ReentrantLock dbLock = new ReentrantLock();
 
     public AdminController(DictLoader dictLoader,
-                           LemmaWriter dbLemmaWriter,
+                           @Qualifier("database") LemmaWriter dbLemmaWriter,
+                           @Qualifier("console") LemmaWriter consoleLemmaWriter,
                            Unmarshaller unmarshaller,
-                           @Value("opencorpora.xml.path") String xmlPath) {
+                           @Value("${opencorpora.xml.path}") String xmlPath) {
         this.dictLoader = dictLoader;
-        this.dbLemmaWriter = dbLemmaWriter;
+        this.dbLemmaWriter = new CompositeLemmaWriter(consoleLemmaWriter, dbLemmaWriter);
         this.unmarshaller = unmarshaller;
         this.xmlPath = xmlPath;
     }

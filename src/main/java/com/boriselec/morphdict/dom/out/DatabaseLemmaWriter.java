@@ -9,7 +9,7 @@ import java.util.Optional;
 /**
  * Loads lemmas into database
  */
-@Component
+@Component("database")
 public class DatabaseLemmaWriter implements LemmaWriter {
     private final LemmaDao dao;
 
