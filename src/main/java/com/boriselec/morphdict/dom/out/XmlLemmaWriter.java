@@ -4,7 +4,6 @@ import com.boriselec.morphdict.dom.data.Lemma;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import java.io.FileNotFoundException;
 
 /**
  * XML writer
@@ -12,7 +11,7 @@ import java.io.FileNotFoundException;
 public class XmlLemmaWriter extends FileLemmaWriter {
     private final Marshaller marshaller;
 
-    protected XmlLemmaWriter(Marshaller marshaller, String path) throws FileNotFoundException {
+    public XmlLemmaWriter(Marshaller marshaller, String path) {
         super(path + ".xml");
         this.marshaller = marshaller;
         writeHeader();
