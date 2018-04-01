@@ -39,6 +39,7 @@ public class ApplicationConfig {
         return new PropertySourcesPlaceholderConfigurer();
     }
 
+    //not thread-safe
     @Bean
     public Unmarshaller lemmaUnmarshaller() throws JAXBException {
         JAXBContext jaxbContext = JAXBContext.newInstance(Lemma.class);
