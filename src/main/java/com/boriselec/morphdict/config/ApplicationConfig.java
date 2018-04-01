@@ -17,7 +17,6 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 
 @Configuration
 @ComponentScan(basePackageClasses = Application.class)
@@ -42,11 +41,9 @@ public class ApplicationConfig {
         return new PropertySourcesPlaceholderConfigurer();
     }
 
-    //not thread-safe
     @Bean
-    public Unmarshaller lemmaUnmarshaller() throws JAXBException {
-        JAXBContext jaxbContext = JAXBContext.newInstance(Lemma.class);
-        return jaxbContext.createUnmarshaller();
+    public JAXBContext lemmaJaxbContext() throws JAXBException {
+        return JAXBContext.newInstance(Lemma.class);
     }
 
     @Bean

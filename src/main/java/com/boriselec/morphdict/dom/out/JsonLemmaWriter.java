@@ -3,8 +3,6 @@ package com.boriselec.morphdict.dom.out;
 import com.boriselec.morphdict.dom.data.Lemma;
 import com.google.gson.Gson;
 
-import java.io.FileNotFoundException;
-
 /**
  * JSON writer
  */
@@ -12,7 +10,7 @@ public class JsonLemmaWriter extends FileLemmaWriter {
     private final Gson gson;
     private boolean first = true;
 
-    public JsonLemmaWriter(Gson gson, String path) throws FileNotFoundException {
+    public JsonLemmaWriter(Gson gson, String path) {
         super(path + ".json");
         this.gson = gson;
         writeHeader();
