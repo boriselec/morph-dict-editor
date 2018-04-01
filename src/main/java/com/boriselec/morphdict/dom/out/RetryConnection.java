@@ -3,6 +3,8 @@ package com.boriselec.morphdict.dom.out;
 import org.jdbi.v3.core.ConnectionException;
 import org.jdbi.v3.core.HandleCallback;
 import org.jdbi.v3.core.Jdbi;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Dirty hack for connection issues
@@ -10,6 +12,8 @@ import org.jdbi.v3.core.Jdbi;
  */
 @Deprecated
 public class RetryConnection {
+    private static final Logger log = LoggerFactory.getLogger(ConsoleProgressWriter.class);
+
     private static final int TRIES_NUMBER = 50;
     private static final long SLEEP_MILLIS = 2000L;
 
@@ -20,13 +24,13 @@ public class RetryConnection {
                 return jdbi.withHandle(callback);
             } catch (ConnectionException e) {
                 tries++;
-                System.out.println("connection issues");
+                log.error("connection issues");
                 try {
                     Thread.sleep(SLEEP_MILLIS);
                 } catch (InterruptedException e1) {
                     break;
                 }
-                System.out.println("trying again...");
+                log.error("trying again...");
             }
         }
         throw new ConnectionException(new RuntimeException("Cannot solve after " + tries + "tries"));
