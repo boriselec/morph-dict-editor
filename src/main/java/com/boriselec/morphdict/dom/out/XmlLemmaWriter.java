@@ -12,7 +12,7 @@ public class XmlLemmaWriter extends FileLemmaWriter {
     private final Marshaller marshaller;
 
     public XmlLemmaWriter(Marshaller marshaller, String path) {
-        super(path + ".xml");
+        super(path);
         this.marshaller = marshaller;
         writeHeader();
     }
