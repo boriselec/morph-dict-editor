@@ -7,12 +7,12 @@ import java.util.List;
 
 public class LemmaView {
     @Expose
-    private final MetaView meta;
+    private final LemmaMetaView meta;
     @Expose
     private final List<Lemma> lemmata;
 
     public LemmaView(List<Lemma> lemmata, int total) {
         this.lemmata = lemmata;
-        this.meta = new MetaView(total);
+        this.meta = new LemmaMetaView(total);
     }
 }
