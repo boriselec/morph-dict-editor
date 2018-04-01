@@ -4,6 +4,8 @@ import com.boriselec.morphdict.storage.VersionStorage;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +28,8 @@ import static com.boriselec.morphdict.storage.VersionStorage.VERSION_FORMAT;
 
 @Component
 public class DictLoader {
+    private static final Logger log = LoggerFactory.getLogger(DictLoader.class);
+
     private static final String OPEN_CORPORA_PAGE = "http://opencorpora.org/?page=downloads";
     private static final String DICT_DOWNLOAD = "http://opencorpora.org/files/export/dict/dict.opcorpora.xml.zip";
 
@@ -44,7 +48,9 @@ public class DictLoader {
     public void ensureLastVersion() {
         try {
             ZonedDateTime localVersion = versionStorage.get();
+            log.info("local dictionary version is {}", localVersion);
             ZonedDateTime currentVersion = getCurrentVersion();
+            log.info("current dictionary version is {}", currentVersion);
 
             if (!Files.exists(destinationPath) || !currentVersion.equals(localVersion)) {
                 deleteOld();
@@ -85,6 +91,7 @@ public class DictLoader {
     }
 
     private void load() throws IOException {
+        log.info("Loading dictionary...");
         URL downloadUrl = new URL(DICT_DOWNLOAD);
         try (
             ReadableByteChannel rbc = Channels.newChannel(downloadUrl.openStream());
@@ -92,9 +99,11 @@ public class DictLoader {
         ) {
             fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
         }
+        log.info("Dictionary loaded");
     }
 
     private void unzip() throws IOException {
+        log.info("Unzipping...");
         try (
             ZipInputStream zipInputStream = new ZipInputStream(new BufferedInputStream(new FileInputStream(tempZipPath)));
             FileOutputStream unpack = new FileOutputStream(destinationPath.toFile());
@@ -104,5 +113,6 @@ public class DictLoader {
         } finally {
             Files.delete(Paths.get(tempZipPath));
         }
+        log.info("Unzipped");
     }
 }
