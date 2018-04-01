@@ -2,6 +2,9 @@ package com.boriselec.morphdict.config;
 
 import com.boriselec.morphdict.Application;
 import com.boriselec.morphdict.dom.data.Lemma;
+import com.boriselec.morphdict.dom.edit.ChainLemmaTransformer;
+import com.boriselec.morphdict.dom.edit.DigitLemmaFilter;
+import com.boriselec.morphdict.dom.edit.LemmaTransformer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.jdbi.v3.core.Jdbi;
@@ -44,5 +47,12 @@ public class ApplicationConfig {
     public Unmarshaller lemmaUnmarshaller() throws JAXBException {
         JAXBContext jaxbContext = JAXBContext.newInstance(Lemma.class);
         return jaxbContext.createUnmarshaller();
+    }
+
+    @Bean
+    public LemmaTransformer lemmaFilter() {
+        return new ChainLemmaTransformer(
+            new DigitLemmaFilter()
+        );
     }
 }
