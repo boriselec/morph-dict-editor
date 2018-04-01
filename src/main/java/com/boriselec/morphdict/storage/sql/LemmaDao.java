@@ -74,7 +74,7 @@ public class LemmaDao {
             lemma.lemmaForm.text,
             requireNonNull(lemma.id),
             requireNonNull(lemma.revision),
-            LemmaState.OPENCORPORA
+            requireNonNull(lemma.state)
         );
     }
 

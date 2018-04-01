@@ -7,7 +7,7 @@ import com.boriselec.morphdict.dom.data.Lemma;
  */
 public class DigitLemmaFilter extends LemmaFilter {
     @Override
-    protected boolean disabled(Lemma lemma) {
+    protected boolean isDisabled(Lemma lemma) {
         return lemma.lemmaForm.text.chars().anyMatch(Character::isDigit);
     }
 }

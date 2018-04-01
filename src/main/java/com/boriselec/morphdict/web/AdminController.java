@@ -2,6 +2,7 @@ package com.boriselec.morphdict.web;
 
 import com.boriselec.morphdict.dom.data.Lemma;
 import com.boriselec.morphdict.dom.edit.LemmaReader;
+import com.boriselec.morphdict.dom.edit.LemmaTransformer;
 import com.boriselec.morphdict.dom.in.FileLemmaReader;
 import com.boriselec.morphdict.dom.out.CompositeLemmaWriter;
 import com.boriselec.morphdict.dom.out.LemmaWriter;
@@ -22,6 +23,7 @@ public class AdminController {
     private final LemmaWriter dbLemmaWriter;
     private final Unmarshaller unmarshaller;
     private final String xmlPath;
+    private final LemmaTransformer lemmaFilter;
 
     private final ReentrantLock dictLock = new ReentrantLock();
     private final ReentrantLock dbLock = new ReentrantLock();
@@ -30,11 +32,13 @@ public class AdminController {
                            @Qualifier("database") LemmaWriter dbLemmaWriter,
                            @Qualifier("console") LemmaWriter consoleLemmaWriter,
                            Unmarshaller unmarshaller,
-                           @Value("${opencorpora.xml.path}") String xmlPath) {
+                           @Value("${opencorpora.xml.path}") String xmlPath,
+                           LemmaTransformer lemmaFilter) {
         this.dictLoader = dictLoader;
         this.dbLemmaWriter = new CompositeLemmaWriter(consoleLemmaWriter, dbLemmaWriter);
         this.unmarshaller = unmarshaller;
         this.xmlPath = xmlPath;
+        this.lemmaFilter = lemmaFilter;
     }
 
     @RequestMapping(value = "/sync/dict", method = RequestMethod.POST)
@@ -49,7 +53,8 @@ public class AdminController {
                 LemmaReader in = new FileLemmaReader(unmarshaller, xmlPath);
             ) {
                 for (Lemma lemma : in) {
-                    dbLemmaWriter.write(lemma);
+                    lemmaFilter.transform(lemma)
+                        .ifPresent(dbLemmaWriter::write);
                 }
             }
         });

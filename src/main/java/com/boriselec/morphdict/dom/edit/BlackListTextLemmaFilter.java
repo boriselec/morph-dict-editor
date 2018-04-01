@@ -17,7 +17,7 @@ public class BlackListTextLemmaFilter extends LemmaFilter {
     }
 
     @Override
-    protected boolean disabled(Lemma lemma) {
+    protected boolean isDisabled(Lemma lemma) {
         return blackList.contains(lemma.lemmaForm.text);
     }
 }
