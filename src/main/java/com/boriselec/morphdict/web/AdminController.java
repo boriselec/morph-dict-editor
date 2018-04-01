@@ -49,7 +49,7 @@ public class AdminController {
                            LemmaDao lemmaDao) {
         this.dictLoader = dictLoader;
         this.lemmaJaxbContext = lemmaJaxbContext;
-        this.dbLemmaWriter = new CompositeLemmaWriter(new CompositeLemmaWriter(), dbLemmaWriter);
+        this.dbLemmaWriter = new CompositeLemmaWriter(new ConsoleProgressWriter(), dbLemmaWriter);
         this.inXmlPath = inXmlPath;
         this.lemmaFilter = lemmaFilter;
         this.gson = gson;
