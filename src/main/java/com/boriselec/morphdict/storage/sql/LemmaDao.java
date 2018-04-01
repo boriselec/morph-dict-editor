@@ -4,6 +4,7 @@ import com.boriselec.morphdict.dom.data.Lemma;
 import com.boriselec.morphdict.dom.data.LemmaState;
 import com.boriselec.morphdict.dom.out.RetryConnection;
 import com.google.gson.Gson;
+import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -51,11 +52,13 @@ public class LemmaDao {
     }
 
     public void delete(int id) {
-        jdbi.withHandle(handle ->
-            handle.createUpdate("UPDATE LEMMA SET STATE = :state WHERE ID = :id")
-                .bind("id", id)
-                .bind("state", LemmaState.DELETED.getCode())
-                .execute()
+        jdbi.withHandle(handle -> {
+                handle.createUpdate("UPDATE LEMMA SET STATE = :state WHERE ID = :id")
+                    .bind("id", id)
+                    .bind("state", LemmaState.DELETED.getCode())
+                    .execute();
+                return bumpRevision(handle);
+            }
         );
     }
 
@@ -105,16 +108,26 @@ public class LemmaDao {
         );
     }
 
+    public int getDictionaryRevision() {
+        return jdbi.withHandle(handle ->
+            handle.createQuery("SELECT VALUE FROM REVISION")
+                .mapTo(Integer.class)
+                .findOnly()
+        );
+    }
+
     private void insert(String json, String text, int id, int revision, LemmaState state) {
-        RetryConnection.retry(jdbi, handle ->
-            handle.createUpdate("INSERT INTO LEMMA (TEXT, JSON, ID, REVISION, STATE) " +
-                "VALUES (:text, :json, :id, :revision, :state)")
-                .bind("text", text)
-                .bind("json", json)
-                .bind("id", id)
-                .bind("revision", revision)
-                .bind("state", state.getCode())
-                .execute()
+        RetryConnection.retry(jdbi, handle -> {
+                handle.createUpdate("INSERT INTO LEMMA (TEXT, JSON, ID, REVISION, STATE) " +
+                    "VALUES (:text, :json, :id, :revision, :state)")
+                    .bind("text", text)
+                    .bind("json", json)
+                    .bind("id", id)
+                    .bind("revision", revision)
+                    .bind("state", state.getCode())
+                    .execute();
+                return bumpRevision(handle);
+            }
         );
     }
 
@@ -132,5 +145,9 @@ public class LemmaDao {
         lemma.state = LemmaState.fromCode(rs.getInt("STATE"));
         lemma.revision = rs.getInt("REVISION");
         return lemma;
+    }
+
+    private int bumpRevision(Handle handle) {
+        return handle.createUpdate("UPDATE REVISION SET VALUE = VALUE + 1").execute();
     }
 }

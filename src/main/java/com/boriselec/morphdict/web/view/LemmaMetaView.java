@@ -2,11 +2,11 @@ package com.boriselec.morphdict.web.view;
 
 import com.google.gson.annotations.Expose;
 
-public class MetaView {
+public class LemmaMetaView {
     @Expose
     private final int total;
 
-    public MetaView(int total) {
+    public LemmaMetaView(int total) {
         this.total = total;
     }
 }
