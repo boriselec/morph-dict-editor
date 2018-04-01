@@ -11,7 +11,7 @@ public class JsonLemmaWriter extends FileLemmaWriter {
     private boolean first = true;
 
     public JsonLemmaWriter(Gson gson, String path) {
-        super(path + ".json");
+        super(path);
         this.gson = gson;
         writeHeader();
     }
