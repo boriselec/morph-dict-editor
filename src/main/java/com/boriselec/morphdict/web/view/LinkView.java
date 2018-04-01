@@ -1,5 +1,6 @@
 package com.boriselec.morphdict.web.view;
 
+import com.boriselec.morphdict.link.DictionaryLink;
 import com.google.gson.annotations.Expose;
 
 public class LinkView {
@@ -10,9 +11,9 @@ public class LinkView {
     @Expose
     private final Integer revision;
 
-    public LinkView(String name, String url, Integer revision) {
-        this.name = name;
-        this.url = url;
-        this.revision = revision;
+    public LinkView(DictionaryLink link) {
+        this.name = link.getDescription();
+        this.url = link.getLocalPath();
+        this.revision = link.getRevision();
     }
 }

@@ -1,9 +1,9 @@
 package com.boriselec.morphdict.web;
 
+import com.boriselec.morphdict.link.DictionaryLink;
+import com.boriselec.morphdict.link.FileDictRepository;
 import com.boriselec.morphdict.storage.sql.LemmaDao;
-import com.boriselec.morphdict.web.view.LinkView;
 import com.boriselec.morphdict.web.view.LinksView;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,21 +12,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 
 @RestController("/api/link")
 @RequestMapping("/api/link")
 public class LinkController {
-    private final String jsonPath;
-    private final String xmlPath;
+    private final FileDictRepository repository;
     private final LemmaDao lemmaDao;
 
-    public LinkController(@Value("${json.path}") String jsonPath,
-                          @Value("${xml.path}") String xmlPath,
+    public LinkController(FileDictRepository repository,
                           LemmaDao lemmaDao) {
-        this.jsonPath = jsonPath;
-        this.xmlPath = xmlPath;
+        this.repository = repository;
         this.lemmaDao = lemmaDao;
     }
 
@@ -46,10 +42,7 @@ public class LinkController {
     @CrossOrigin
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public LinksView getLinks() {
-        List<LinkView> links = Arrays.asList(
-            new LinkView("json", checkUrl(jsonPath), null),
-            new LinkView("xml", checkUrl(xmlPath), null)
-        );
+        List<DictionaryLink> links = repository.getLinks();
         int revision = lemmaDao.getDictionaryRevision();
         return new LinksView(links, revision);
     }

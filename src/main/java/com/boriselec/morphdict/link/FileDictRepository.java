@@ -1,0 +1,73 @@
+package com.boriselec.morphdict.link;
+
+import com.boriselec.morphdict.dom.data.Lemma;
+import com.boriselec.morphdict.dom.edit.LemmaReader;
+import com.boriselec.morphdict.dom.in.DatabaseLemmaReader;
+import com.boriselec.morphdict.dom.out.CompositeLemmaWriter;
+import com.boriselec.morphdict.dom.out.ConsoleProgressWriter;
+import com.boriselec.morphdict.dom.out.LemmaWriter;
+import com.boriselec.morphdict.storage.sql.LemmaDao;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+/**
+ * Repo of all dictionary files
+ */
+@Component
+public class FileDictRepository {
+    private final List<DictionaryLink> links;
+    private final LemmaDao lemmaDao;
+    private final DictionaryLinkDao dictionaryLinkDao;
+
+    public FileDictRepository(List<DictionaryLink> links,
+                              LemmaDao lemmaDao,
+                              DictionaryLinkDao dictionaryLinkDao) {
+        this.lemmaDao = lemmaDao;
+        this.dictionaryLinkDao = dictionaryLinkDao;
+        this.links = init(links);
+    }
+
+    private List<DictionaryLink> init(List<DictionaryLink> links) {
+        for (DictionaryLink link : links) {
+            dictionaryLinkDao.getRevision(link.getDescription())
+                .ifPresent(link::setRevision);
+        }
+        dictionaryLinkDao.load(links.stream()
+            .map(DictionaryLink::getDescription)
+            .collect(Collectors.toList()));
+        return links;
+    }
+
+    /**
+     * Update to current revision
+     */
+    public void update() {
+        int currentRevision = lemmaDao.getDictionaryRevision();
+        for (DictionaryLink link : links) {
+            writeDict(link::getWriter);
+            link.setRevision(currentRevision);
+            dictionaryLinkDao.updateRevision(link.getDescription(), currentRevision);
+        }
+
+    }
+
+    public List<DictionaryLink> getLinks() {
+        return links;
+    }
+
+    private void writeDict(Supplier<LemmaWriter> lemmaWriter) {
+        try (
+            LemmaReader in = new DatabaseLemmaReader(lemmaDao);
+            LemmaWriter out = new CompositeLemmaWriter(
+                new ConsoleProgressWriter(),
+                lemmaWriter.get());
+        ) {
+            for (Lemma lemma : in) {
+                out.write(lemma);
+            }
+        }
+    }
+}
