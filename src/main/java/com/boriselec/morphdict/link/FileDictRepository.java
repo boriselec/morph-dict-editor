@@ -7,6 +7,8 @@ import com.boriselec.morphdict.dom.out.CompositeLemmaWriter;
 import com.boriselec.morphdict.dom.out.ConsoleProgressWriter;
 import com.boriselec.morphdict.dom.out.LemmaWriter;
 import com.boriselec.morphdict.storage.sql.LemmaDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -18,6 +20,8 @@ import java.util.stream.Collectors;
  */
 @Component
 public class FileDictRepository {
+    private static final Logger log = LoggerFactory.getLogger(FileDictRepository.class);
+
     private final List<DictionaryLink> links;
     private final LemmaDao lemmaDao;
     private final DictionaryLinkDao dictionaryLinkDao;
@@ -47,9 +51,15 @@ public class FileDictRepository {
     public void update() {
         int currentRevision = lemmaDao.getDictionaryRevision();
         for (DictionaryLink link : links) {
-            writeDict(link::getWriter);
-            link.setRevision(currentRevision);
-            dictionaryLinkDao.updateRevision(link.getDescription(), currentRevision);
+            if (link.getRevision() != currentRevision) {
+                log.info("Dictionary {} is outdated: {}. Updating to {}",
+                    link.getDescription(), link.getRevision(), currentRevision);
+                writeDict(link::getWriter);
+                link.setRevision(currentRevision);
+                dictionaryLinkDao.updateRevision(link.getDescription(), currentRevision);
+            } else {
+                log.info("Dictionary {} is up to date: {}", link.getDescription(), currentRevision);
+            }
         }
 
     }
