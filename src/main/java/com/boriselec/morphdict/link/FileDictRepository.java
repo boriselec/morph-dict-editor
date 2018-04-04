@@ -83,7 +83,7 @@ public class FileDictRepository {
         try (
             LemmaReader in = new DatabaseLemmaReader(lemmaDao);
             LemmaWriter out = new CompositeLemmaWriter(
-                new ConsoleProgressWriter(),
+                new ConsoleProgressWriter(log),
                 lemmaWriter.get());
         ) {
             for (Lemma lemma : in) {

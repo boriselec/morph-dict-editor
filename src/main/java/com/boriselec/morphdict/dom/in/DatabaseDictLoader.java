@@ -40,7 +40,7 @@ public class DatabaseDictLoader {
                               LemmaTransformer lemmaFilter,
                               @Qualifier("inFileLock") ReentrantLock inFileLock,
                               VersionDao versionDao) {
-        this.dbLemmaWriter = new CompositeLemmaWriter(new ConsoleProgressWriter(), dbLemmaWriter);
+        this.dbLemmaWriter = new CompositeLemmaWriter(new ConsoleProgressWriter(log), dbLemmaWriter);
         this.lemmaJaxbContext = lemmaJaxbContext;
         this.inXmlPath = inXmlPath;
         this.lemmaFilter = lemmaFilter;

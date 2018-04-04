@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
  */
 @Deprecated
 public class RetryConnection {
-    private static final Logger log = LoggerFactory.getLogger(ConsoleProgressWriter.class);
+    private static final Logger log = LoggerFactory.getLogger(RetryConnection.class);
 
     private static final int TRIES_NUMBER = 50;
     private static final long SLEEP_MILLIS = 2000L;
