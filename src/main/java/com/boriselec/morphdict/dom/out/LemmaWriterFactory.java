@@ -2,6 +2,7 @@ package com.boriselec.morphdict.dom.out;
 
 import com.boriselec.morphdict.storage.sql.LemmaDao;
 import com.google.gson.Gson;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.Marshaller;
 import java.io.FileNotFoundException;
@@ -28,6 +29,6 @@ public class LemmaWriterFactory {
     }
 
     public LemmaWriter createConsoleProgressWriter() {
-        return new ConsoleProgressWriter();
+        return new ConsoleProgressWriter(LoggerFactory.getLogger(ConsoleProgressWriter.class));
     }
 }
