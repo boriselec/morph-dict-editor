@@ -50,16 +50,16 @@ public class DatabaseDictLoader {
 
     @Scheduled(fixedDelayString = "#{${database.loader.delay.minutes} * 60 * 1000}")
     public void load() {
-        if (inFileLock.tryLock()) {
-            ZonedDateTime fileVersion = versionDao.get(VersionType.FILE);
-            ZonedDateTime storageVersion = versionDao.get(VersionType.STORAGE);
+        ZonedDateTime fileVersion = versionDao.get(VersionType.FILE);
+        ZonedDateTime storageVersion = versionDao.get(VersionType.STORAGE);
 
-            if (fileVersion == null) {
-                log.warn("File is not loaded");
-                return;
-            }
+        if (fileVersion == null) {
+            log.warn("File is not loaded");
+            return;
+        }
 
-            if (!fileVersion.equals(storageVersion)) {
+        if (!fileVersion.equals(storageVersion)) {
+            if (inFileLock.tryLock()) {
                 try (
                     LemmaReader in = new FileLemmaReader(lemmaJaxbContext.createUnmarshaller(), inXmlPath)
                 ) {
