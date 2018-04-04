@@ -29,7 +29,6 @@ public class AdminController {
     private final LemmaTransformer lemmaFilter;
     private final FileDictRepository fileDictRepository;
 
-    private final ReentrantLock dictLock = new ReentrantLock();
     private final ReentrantLock dbLock = new ReentrantLock();
 
     public AdminController(DictLoader dictLoader,
@@ -48,7 +47,7 @@ public class AdminController {
 
     @RequestMapping(value = "/sync/dict/in", method = RequestMethod.POST)
     public void syncDict() {
-        withLock(dictLock, dictLoader::ensureLastVersion);
+        dictLoader.ensureLastVersion();
     }
 
     @RequestMapping(value = "/sync/db", method = RequestMethod.POST)
