@@ -1,6 +1,7 @@
 package com.boriselec.morphdict.storage.file;
 
 import com.boriselec.morphdict.storage.VersionStorage;
+import com.boriselec.morphdict.storage.sql.VersionType;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -11,6 +12,7 @@ import java.time.ZonedDateTime;
 /**
  * Stores version in specified file property
  */
+@Deprecated
 public class FileVersionStorage implements VersionStorage {
     private final Path propertyFilename;
 
@@ -18,7 +20,7 @@ public class FileVersionStorage implements VersionStorage {
         this.propertyFilename = Paths.get(propertyFilename);
     }
 
-    public ZonedDateTime get() {
+    public ZonedDateTime get(VersionType type) {
         if (!Files.exists(propertyFilename)) {
             return null;
         }
@@ -30,7 +32,7 @@ public class FileVersionStorage implements VersionStorage {
         }
     }
 
-    public void update(ZonedDateTime currentVersion) {
+    public void update(VersionType type, ZonedDateTime currentVersion) {
         try {
             if (Files.exists(propertyFilename)) {
                 Files.delete(propertyFilename);

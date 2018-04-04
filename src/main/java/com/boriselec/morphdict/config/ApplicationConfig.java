@@ -20,16 +20,20 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.SchedulingConfigurer;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Configuration
 @ComponentScan(basePackageClasses = Application.class)
 @PropertySource(value = "classpath:application.properties")
 @EnableScheduling
-public class ApplicationConfig {
+public class ApplicationConfig implements SchedulingConfigurer {
     @Bean
     public Jdbi jdbi(@Value("${db.url}") String url,
                      @Value("${db.username}") String username,
@@ -87,5 +91,18 @@ public class ApplicationConfig {
                 return new JsonLemmaWriter(gson, jsonPath);
             }
         };
+    }
+
+    @Bean
+    public ReentrantLock inFileLock() {
+        return new ReentrantLock();
+    }
+
+    @Override
+    public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
+        ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
+        taskScheduler.setPoolSize(3);
+        taskScheduler.initialize();
+        taskRegistrar.setTaskScheduler(taskScheduler);
     }
 }

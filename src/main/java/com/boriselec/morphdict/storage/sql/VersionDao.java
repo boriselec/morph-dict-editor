@@ -18,9 +18,10 @@ public class VersionDao implements VersionStorage {
     }
 
     @Override
-    public ZonedDateTime get() {
+    public ZonedDateTime get(VersionType type) {
         return jdbi.withHandle(handle ->
-            handle.createQuery("SELECT VALUE FROM DICTIONARY_VERSION")
+            handle.createQuery("SELECT VALUE FROM DICTIONARY_VERSION WHERE TYPE = :type")
+                .bind("type", type)
                 .mapTo(String.class)
                 .findFirst())
             .map(s -> ZonedDateTime.parse(s, VERSION_FORMAT))
@@ -28,12 +29,15 @@ public class VersionDao implements VersionStorage {
     }
 
     @Override
-    public void update(ZonedDateTime currentVersion) {
+    public void update(VersionType type, ZonedDateTime currentVersion) {
         String version = VERSION_FORMAT.format(currentVersion);
         jdbi.withHandle(handle -> {
-            handle.execute("TRUNCATE TABLE DICTIONARY_VERSION");
+            handle.createUpdate("DELETE FROM DICTIONARY_VERSION WHERE TYPE = :type")
+                .bind("type", type)
+                .execute();
 
-            return handle.createUpdate("INSERT INTO DICTIONARY_VERSION(VALUE) VALUES (:version)")
+            return handle.createUpdate("INSERT INTO DICTIONARY_VERSION(TYPE, VALUE) VALUES (:type, :version)")
+                .bind("type", type)
                 .bind("version", version)
                 .execute();
         });

@@ -19,6 +19,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class DomApp {
     public static void main(String[] args) throws Exception {
@@ -53,7 +54,7 @@ public class DomApp {
 
         String dict = "C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\dict.opcorpora.xml";
         String zip = "C:\\Users\\boris\\Downloads\\dict.opcorpora.xml\\dict.opcorpora.xml.zip";
-        DictLoader loader = new DictLoader(dict, zip, versionStorage);
+        DictLoader loader = new DictLoader(dict, zip, versionStorage, new ReentrantLock());
         loader.ensureLastVersion();
 
         try (
