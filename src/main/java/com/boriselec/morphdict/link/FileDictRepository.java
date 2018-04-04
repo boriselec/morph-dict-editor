@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -25,6 +26,8 @@ public class FileDictRepository {
     private final List<DictionaryLink> links;
     private final LemmaDao lemmaDao;
     private final DictionaryLinkDao dictionaryLinkDao;
+
+    private final ReentrantLock lock = new ReentrantLock();
 
     public FileDictRepository(List<DictionaryLink> links,
                               LemmaDao lemmaDao,
@@ -52,11 +55,19 @@ public class FileDictRepository {
         int currentRevision = lemmaDao.getDictionaryRevision();
         for (DictionaryLink link : links) {
             if (link.getRevision() != currentRevision) {
-                log.info("Dictionary {} is outdated: {}. Updating to {}",
-                    link.getDescription(), link.getRevision(), currentRevision);
-                writeDict(link::getWriter);
-                link.setRevision(currentRevision);
-                dictionaryLinkDao.updateRevision(link.getDescription(), currentRevision);
+                if (lock.tryLock()) {
+                    try {
+                        log.info("Dictionary {} is outdated: {}. Updating to {}",
+                            link.getDescription(), link.getRevision(), currentRevision);
+                        writeDict(link::getWriter);
+                        link.setRevision(currentRevision);
+                        dictionaryLinkDao.updateRevision(link.getDescription(), currentRevision);
+                    } finally {
+                        lock.unlock();
+                    }
+                } else {
+                    log.warn("Already in progress");
+                }
             } else {
                 log.info("Dictionary {} is up to date: {}", link.getDescription(), currentRevision);
             }
