@@ -19,6 +19,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -27,6 +28,7 @@ import javax.xml.bind.Marshaller;
 @Configuration
 @ComponentScan(basePackageClasses = Application.class)
 @PropertySource(value = "classpath:application.properties")
+@EnableScheduling
 public class ApplicationConfig {
     @Bean
     public Jdbi jdbi(@Value("${db.url}") String url,

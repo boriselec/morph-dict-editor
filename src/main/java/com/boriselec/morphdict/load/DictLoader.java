@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 import java.util.zip.ZipInputStream;
 
@@ -37,6 +38,8 @@ public class DictLoader {
     private final String tempZipPath;
     private final VersionStorage versionStorage;
 
+    private final ReentrantLock lock = new ReentrantLock();
+
     public DictLoader(@Value("${opencorpora.xml.path}") String destinationPath,
                       @Value("${temp.zip.path}") String tempZipPath,
                       VersionStorage versionStorage) {
@@ -46,20 +49,26 @@ public class DictLoader {
     }
 
     public void ensureLastVersion() {
-        try {
-            ZonedDateTime localVersion = versionStorage.get();
-            log.info("local dictionary version is {}", localVersion);
-            ZonedDateTime currentVersion = getCurrentVersion();
-            log.info("current dictionary version is {}", currentVersion);
+        if (lock.tryLock()) {
+            try {
+                ZonedDateTime localVersion = versionStorage.get();
+                log.info("local dictionary version is {}", localVersion);
+                ZonedDateTime currentVersion = getCurrentVersion();
+                log.info("current dictionary version is {}", currentVersion);
 
-            if (!Files.exists(destinationPath) || !currentVersion.equals(localVersion)) {
-                deleteOld();
-                load();
-                unzip();
-                versionStorage.update(currentVersion);
+                if (!Files.exists(destinationPath) || !currentVersion.equals(localVersion)) {
+                    deleteOld();
+                    load();
+                    unzip();
+                    versionStorage.update(currentVersion);
+                }
+            } catch (IOException e) {
+                throw new IllegalStateException(e.getMessage(), e);
+            } finally {
+                lock.unlock();
             }
-        } catch (IOException e) {
-            throw new IllegalStateException(e.getMessage(), e);
+        } else {
+            log.warn("Already in progress");
         }
     }
 
