@@ -1,5 +1,7 @@
 package com.boriselec.morphdict.storage;
 
+import com.boriselec.morphdict.storage.sql.VersionType;
+
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -9,6 +11,6 @@ import java.time.format.DateTimeFormatter;
 public interface VersionStorage {
     DateTimeFormatter VERSION_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm zzz");
 
-    ZonedDateTime get();
-    void update(ZonedDateTime version);
+    ZonedDateTime get(VersionType type);
+    void update(VersionType type, ZonedDateTime version);
 }

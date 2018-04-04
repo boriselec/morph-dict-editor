@@ -1,11 +1,13 @@
 package com.boriselec.morphdict.load;
 
 import com.boriselec.morphdict.storage.VersionStorage;
+import com.boriselec.morphdict.storage.sql.VersionType;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -38,20 +40,22 @@ public class DictLoader {
     private final String tempZipPath;
     private final VersionStorage versionStorage;
 
-    private final ReentrantLock lock = new ReentrantLock();
+    private final ReentrantLock inFileLock;
 
     public DictLoader(@Value("${opencorpora.xml.path}") String destinationPath,
                       @Value("${temp.zip.path}") String tempZipPath,
-                      VersionStorage versionStorage) {
+                      VersionStorage versionStorage,
+                      @Qualifier("inFileLock") ReentrantLock inFileLock) {
         this.destinationPath = Paths.get(destinationPath);
         this.tempZipPath = tempZipPath;
         this.versionStorage = versionStorage;
+        this.inFileLock = inFileLock;
     }
 
     public void ensureLastVersion() {
-        if (lock.tryLock()) {
+        if (inFileLock.tryLock()) {
             try {
-                ZonedDateTime localVersion = versionStorage.get();
+                ZonedDateTime localVersion = versionStorage.get(VersionType.FILE);
                 log.info("local dictionary version is {}", localVersion);
                 ZonedDateTime currentVersion = getCurrentVersion();
                 log.info("current dictionary version is {}", currentVersion);
@@ -60,12 +64,12 @@ public class DictLoader {
                     deleteOld();
                     load();
                     unzip();
-                    versionStorage.update(currentVersion);
+                    versionStorage.update(VersionType.FILE, currentVersion);
                 }
             } catch (IOException e) {
                 throw new IllegalStateException(e.getMessage(), e);
             } finally {
-                lock.unlock();
+                inFileLock.unlock();
             }
         } else {
             log.warn("Already in progress");

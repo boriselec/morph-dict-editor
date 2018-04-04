@@ -54,7 +54,7 @@ public class FileDictRepository {
     public void update() {
         int currentRevision = lemmaDao.getDictionaryRevision();
         for (DictionaryLink link : links) {
-            if (link.getRevision() != currentRevision) {
+            if (link.getRevision() == null || link.getRevision() != currentRevision) {
                 if (lock.tryLock()) {
                     try {
                         log.info("Dictionary {} is outdated: {}. Updating to {}",
