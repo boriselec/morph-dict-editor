@@ -69,7 +69,7 @@ public class FileDictRepository {
                     log.warn("Already in progress");
                 }
             } else {
-                log.info("Dictionary {} is up to date: {}", link.getDescription(), currentRevision);
+                log.trace("Dictionary {} is up to date: {}", link.getDescription(), currentRevision);
             }
         }
 
