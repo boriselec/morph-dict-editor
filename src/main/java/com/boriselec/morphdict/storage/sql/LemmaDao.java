@@ -132,10 +132,10 @@ public class LemmaDao {
     }
 
     private int generateId() {
-        return jdbi.withHandle(handle ->
-            handle.createQuery("SELECT NEXT VALUE FOR LEMMA_ID")
-                .mapTo(Integer.class)
-                .findOnly()
+        return jdbi.withHandle(handle -> {
+                handle.createUpdate("UPDATE LEMMA_ID SET VALUE = VALUE - 1").execute();
+                return handle.createQuery("SELECT VALUE FROM LEMMA_ID").mapTo(Integer.class).findOnly();
+            }
         );
     }
 
