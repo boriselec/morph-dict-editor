@@ -78,7 +78,7 @@ public class DatabaseDictLoader {
                 log.warn("In file is locked");
             }
         } else {
-            log.warn("Database is up to date");
+            log.trace("Database is up to date {}", storageVersion);
         }
     }
 }

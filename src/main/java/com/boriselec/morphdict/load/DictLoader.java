@@ -56,15 +56,16 @@ public class DictLoader {
         if (inFileLock.tryLock()) {
             try {
                 ZonedDateTime localVersion = versionStorage.get(VersionType.FILE);
-                log.info("local dictionary version is {}", localVersion);
                 ZonedDateTime currentVersion = getCurrentVersion();
-                log.info("current dictionary version is {}", currentVersion);
 
                 if (!Files.exists(destinationPath) || !currentVersion.equals(localVersion)) {
+                    log.info("Updating. local: {}, current: {}", localVersion, currentVersion);
                     deleteOld();
                     load();
                     unzip();
                     versionStorage.update(VersionType.FILE, currentVersion);
+                } else {
+                    log.trace("Version {} is up to date", localVersion);
                 }
             } catch (IOException e) {
                 throw new IllegalStateException(e.getMessage(), e);
