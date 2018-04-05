@@ -74,9 +74,11 @@ public class DatabaseDictLoader {
                 } finally {
                     inFileLock.unlock();
                 }
+            } else {
+                log.warn("In file is locked");
             }
         } else {
-            log.warn("In file is locked");
+            log.warn("Database is up to date");
         }
     }
 }
