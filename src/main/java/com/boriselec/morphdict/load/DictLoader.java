@@ -42,8 +42,8 @@ public class DictLoader {
 
     private final ReentrantLock inFileLock;
 
-    public DictLoader(@Value("${opencorpora.xml.path}") String destinationPath,
-                      @Value("${temp.zip.path}") String tempZipPath,
+    public DictLoader(@Value("#{'${file.root}' + '${opencorpora.xml.path}'}") String destinationPath,
+                      @Value("#{'${file.root}' + '${temp.zip.path}'}") String tempZipPath,
                       VersionStorage versionStorage,
                       @Qualifier("inFileLock") ReentrantLock inFileLock) {
         this.destinationPath = Paths.get(destinationPath);

@@ -66,7 +66,7 @@ public class ApplicationConfig implements SchedulingConfigurer {
     }
 
     @Bean
-    public DictionaryLink json(@Value("${xml.path}") String xmlPath,
+    public DictionaryLink json(@Value("#{'${static.url}' + '${xml.path}'}") String xmlPath,
                                JAXBContext lemmaJaxbContext) {
         return new DictionaryLink("xml", xmlPath) {
             @Override
@@ -83,7 +83,7 @@ public class ApplicationConfig implements SchedulingConfigurer {
     }
 
     @Bean
-    public DictionaryLink xml(@Value("${json.path}") String jsonPath,
+    public DictionaryLink xml(@Value("#{'${static.url}' + '${json.path}'}") String jsonPath,
                               @Qualifier("internal") Gson gson) {
         return new DictionaryLink("json", jsonPath) {
             @Override
