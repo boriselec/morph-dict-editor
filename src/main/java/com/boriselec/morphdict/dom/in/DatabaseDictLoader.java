@@ -36,7 +36,7 @@ public class DatabaseDictLoader {
 
     public DatabaseDictLoader(@Qualifier("database") LemmaWriter dbLemmaWriter,
                               JAXBContext lemmaJaxbContext,
-                              @Value("${opencorpora.xml.path}") String inXmlPath,
+                              @Value("#{'${file.root}' + '${opencorpora.xml.path}'}") String inXmlPath,
                               LemmaTransformer lemmaFilter,
                               @Qualifier("inFileLock") ReentrantLock inFileLock,
                               VersionDao versionDao) {

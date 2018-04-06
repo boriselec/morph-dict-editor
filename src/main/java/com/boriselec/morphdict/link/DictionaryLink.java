@@ -4,21 +4,21 @@ import com.boriselec.morphdict.dom.out.LemmaWriter;
 
 public abstract class DictionaryLink {
     private final String description;
-    private final String localPath;
+    private final String path;
 
     private Integer revision;
 
-    public DictionaryLink(String description, String localPath) {
+    public DictionaryLink(String description, String path) {
         this.description = description;
-        this.localPath = localPath;
+        this.path = path;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public String getLocalPath() {
-        return localPath;
+    public String getPath() {
+        return path;
     }
 
     public Integer getRevision() {

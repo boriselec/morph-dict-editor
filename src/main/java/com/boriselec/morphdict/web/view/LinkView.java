@@ -13,7 +13,7 @@ public class LinkView {
 
     public LinkView(DictionaryLink link) {
         this.name = link.getDescription();
-        this.url = link.getLocalPath();
+        this.url = link.getPath();
         this.revision = link.getRevision();
     }
 }
