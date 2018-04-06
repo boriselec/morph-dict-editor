@@ -19,6 +19,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -66,6 +67,7 @@ public class ApplicationConfig implements SchedulingConfigurer {
     }
 
     @Bean
+    @Order(value = 1)
     public DictionaryLink json(@Value("#{'${static.url}' + '${xml.path}'}") String xmlLink,
                                @Value("#{'${file.root}' + '${xml.path}'}") String xmlPath,
                                JAXBContext lemmaJaxbContext) {
@@ -84,6 +86,7 @@ public class ApplicationConfig implements SchedulingConfigurer {
     }
 
     @Bean
+    @Order(value = 2)
     public DictionaryLink xml(@Value("#{'${static.url}' + '${json.path}'}") String jsonLink,
                               @Value("#{'${file.root}' + '${json.path}'}") String jsonPath,
                               @Qualifier("internal") Gson gson) {
