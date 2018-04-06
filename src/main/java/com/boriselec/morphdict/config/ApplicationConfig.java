@@ -66,9 +66,10 @@ public class ApplicationConfig implements SchedulingConfigurer {
     }
 
     @Bean
-    public DictionaryLink json(@Value("#{'${static.url}' + '${xml.path}'}") String xmlPath,
+    public DictionaryLink json(@Value("#{'${static.url}' + '${xml.path}'}") String xmlLink,
+                               @Value("#{'${file.root}' + '${xml.path}'}") String xmlPath,
                                JAXBContext lemmaJaxbContext) {
-        return new DictionaryLink("xml", xmlPath) {
+        return new DictionaryLink("xml", xmlLink) {
             @Override
             public LemmaWriter getWriter() {
                 try {
@@ -83,9 +84,10 @@ public class ApplicationConfig implements SchedulingConfigurer {
     }
 
     @Bean
-    public DictionaryLink xml(@Value("#{'${static.url}' + '${json.path}'}") String jsonPath,
+    public DictionaryLink xml(@Value("#{'${static.url}' + '${json.path}'}") String jsonLink,
+                              @Value("#{'${file.root}' + '${json.path}'}") String jsonPath,
                               @Qualifier("internal") Gson gson) {
-        return new DictionaryLink("json", jsonPath) {
+        return new DictionaryLink("json", jsonLink) {
             @Override
             public LemmaWriter getWriter() {
                 return new JsonLemmaWriter(gson, jsonPath);
