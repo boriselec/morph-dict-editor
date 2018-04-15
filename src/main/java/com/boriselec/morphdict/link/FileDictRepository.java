@@ -9,6 +9,7 @@ import com.boriselec.morphdict.dom.out.LemmaWriter;
 import com.boriselec.morphdict.storage.sql.LemmaDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -26,15 +27,16 @@ public class FileDictRepository {
     private final List<DictionaryLink> links;
     private final LemmaDao lemmaDao;
     private final DictionaryLinkDao dictionaryLinkDao;
-
-    private final ReentrantLock lock = new ReentrantLock();
+    private final ReentrantLock lock;
 
     public FileDictRepository(List<DictionaryLink> links,
                               LemmaDao lemmaDao,
-                              DictionaryLinkDao dictionaryLinkDao) {
+                              DictionaryLinkDao dictionaryLinkDao,
+                              @Qualifier("dbLock") ReentrantLock lock) {
         this.lemmaDao = lemmaDao;
         this.dictionaryLinkDao = dictionaryLinkDao;
         this.links = init(links);
+        this.lock = lock;
     }
 
     private List<DictionaryLink> init(List<DictionaryLink> links) {
@@ -66,7 +68,7 @@ public class FileDictRepository {
                         lock.unlock();
                     }
                 } else {
-                    log.warn("Already in progress");
+                    log.warn("Cannot acquire lock");
                 }
             } else {
                 log.trace("Dictionary {} is up to date: {}", link.getDescription(), currentRevision);

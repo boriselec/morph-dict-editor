@@ -103,6 +103,11 @@ public class ApplicationConfig implements SchedulingConfigurer {
         return new ReentrantLock();
     }
 
+    @Bean
+    public ReentrantLock dbLock() {
+        return new ReentrantLock();
+    }
+
     @Override
     public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
         ThreadPoolTaskScheduler taskScheduler = new ThreadPoolTaskScheduler();
