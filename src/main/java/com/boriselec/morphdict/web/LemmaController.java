@@ -58,7 +58,7 @@ public class LemmaController {
     public void deleteLemma(
         @RequestParam(value = "id") int id)
     {
-        dao.delete(id);
+        dao.markDeleted(id);
     }
 
     @CrossOrigin
