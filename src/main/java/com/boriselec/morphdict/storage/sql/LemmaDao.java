@@ -51,11 +51,21 @@ public class LemmaDao {
         );
     }
 
-    public void delete(int id) {
+    public void markDeleted(int id) {
         jdbi.withHandle(handle -> {
                 handle.createUpdate("UPDATE LEMMA SET STATE = :state WHERE ID = :id")
                     .bind("id", id)
                     .bind("state", LemmaState.DELETED.getCode())
+                    .execute();
+                return bumpRevision(handle);
+            }
+        );
+    }
+
+    public void remove(int id) {
+        jdbi.withHandle(handle -> {
+                handle.createUpdate("DELETE FROM LEMMA WHERE ID = :id")
+                    .bind("id", id)
                     .execute();
                 return bumpRevision(handle);
             }

@@ -26,7 +26,7 @@ public class DatabaseLemmaWriter implements LemmaWriter {
                 //skip
                 return;
             } else {
-                dao.delete(lemma.id);
+                dao.remove(lemma.id);
             }
         }
 
