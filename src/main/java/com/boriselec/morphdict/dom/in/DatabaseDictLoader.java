@@ -32,6 +32,7 @@ public class DatabaseDictLoader {
     private final String inXmlPath;
     private final LemmaTransformer lemmaFilter;
     private final ReentrantLock inFileLock;
+    private final ReentrantLock dbLock;
     private final VersionDao versionDao;
 
     public DatabaseDictLoader(@Qualifier("database") LemmaWriter dbLemmaWriter,
@@ -39,12 +40,14 @@ public class DatabaseDictLoader {
                               @Value("#{'${file.root}' + '${opencorpora.xml.path}'}") String inXmlPath,
                               LemmaTransformer lemmaFilter,
                               @Qualifier("inFileLock") ReentrantLock inFileLock,
+                              @Qualifier("dbLock") ReentrantLock dbLock,
                               VersionDao versionDao) {
         this.dbLemmaWriter = new CompositeLemmaWriter(new ConsoleProgressWriter(log), dbLemmaWriter);
         this.lemmaJaxbContext = lemmaJaxbContext;
         this.inXmlPath = inXmlPath;
         this.lemmaFilter = lemmaFilter;
         this.inFileLock = inFileLock;
+        this.dbLock = dbLock;
         this.versionDao = versionDao;
     }
 
@@ -64,6 +67,7 @@ public class DatabaseDictLoader {
                     LemmaReader in = new FileLemmaReader(lemmaJaxbContext.createUnmarshaller(), inXmlPath)
                 ) {
                     log.info("Loading {} version in database...", fileVersion);
+                    dbLock.lock();
                     for (Lemma lemma : in) {
                         lemmaFilter.transform(lemma)
                             .ifPresent(dbLemmaWriter::write);
@@ -73,6 +77,7 @@ public class DatabaseDictLoader {
                     throw new RuntimeException(e);
                 } finally {
                     inFileLock.unlock();
+                    dbLock.unlock();
                 }
             } else {
                 log.warn("In file is locked");
