@@ -6,7 +6,7 @@ import com.boriselec.morphdict.dom.edit.LemmaTransformer;
 import com.boriselec.morphdict.dom.out.CompositeLemmaWriter;
 import com.boriselec.morphdict.dom.out.ConsoleProgressWriter;
 import com.boriselec.morphdict.dom.out.LemmaWriter;
-import com.boriselec.morphdict.storage.sql.VersionDao;
+import com.boriselec.morphdict.storage.VersionStorage;
 import com.boriselec.morphdict.storage.sql.VersionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +33,7 @@ public class DatabaseDictLoader {
     private final LemmaTransformer lemmaFilter;
     private final ReentrantLock inFileLock;
     private final ReentrantLock dbLock;
-    private final VersionDao versionDao;
+    private final VersionStorage versionDao;
 
     public DatabaseDictLoader(@Qualifier("database") LemmaWriter dbLemmaWriter,
                               JAXBContext lemmaJaxbContext,
@@ -41,7 +41,7 @@ public class DatabaseDictLoader {
                               LemmaTransformer lemmaFilter,
                               @Qualifier("inFileLock") ReentrantLock inFileLock,
                               @Qualifier("dbLock") ReentrantLock dbLock,
-                              VersionDao versionDao) {
+                              VersionStorage versionDao) {
         this.dbLemmaWriter = new CompositeLemmaWriter(new ConsoleProgressWriter(log), dbLemmaWriter);
         this.lemmaJaxbContext = lemmaJaxbContext;
         this.inXmlPath = inXmlPath;
