@@ -6,22 +6,9 @@ import org.junit.Test;
 
 import java.util.Optional;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class DigitLemmaFilterTest {
-    @Test
-    public void shouldSkipOnDigitWord() throws Exception {
-        DigitLemmaFilter filter = new DigitLemmaFilter();
-        Lemma lemma = new Lemma();
-        lemma.lemmaForm = new WordForm();
-        lemma.lemmaForm.text = "test1";
-
-        Optional<Lemma> transformed = filter.transform(lemma);
-
-        assertFalse(transformed.isPresent());
-    }
-
     @Test
     public void shouldContinueOnLetterWord() throws Exception {
         DigitLemmaFilter filter = new DigitLemmaFilter();
