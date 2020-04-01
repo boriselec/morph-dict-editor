@@ -6,22 +6,9 @@ import org.junit.Test;
 
 import java.util.Optional;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class BlackListTextLemmaFilterTest {
-    @Test
-    public void shouldSkipEntryInBlackList() throws Exception {
-        BlackListTextLemmaFilter filter = new BlackListTextLemmaFilter("test");
-        Lemma lemma = new Lemma();
-        lemma.lemmaForm = new WordForm();
-        lemma.lemmaForm.text = "test";
-
-        Optional<Lemma> transformed = filter.transform(lemma);
-
-        assertFalse(transformed.isPresent());
-    }
-
     @Test
     public void shouldContinueOnOtherWord() throws Exception {
         BlackListTextLemmaFilter filter = new BlackListTextLemmaFilter("test");
