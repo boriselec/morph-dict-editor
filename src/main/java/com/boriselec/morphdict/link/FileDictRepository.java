@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -79,6 +80,12 @@ public class FileDictRepository {
 
     public List<DictionaryLink> getLinks() {
         return links;
+    }
+
+    public Optional<DictionaryLink> getLinkByDescription(String description) {
+        return links.stream()
+            .filter(link -> link.getDescription().equals(description))
+            .findAny();
     }
 
     private void writeDict(Supplier<LemmaWriter> lemmaWriter) {

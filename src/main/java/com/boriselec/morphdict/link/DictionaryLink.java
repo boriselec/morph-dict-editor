@@ -2,13 +2,15 @@ package com.boriselec.morphdict.link;
 
 import com.boriselec.morphdict.dom.out.LemmaWriter;
 
+import java.nio.file.Path;
+
 public abstract class DictionaryLink {
     private final String description;
-    private final String path;
+    private final Path path;
 
     private Integer revision;
 
-    public DictionaryLink(String description, String path) {
+    public DictionaryLink(String description, Path path) {
         this.description = description;
         this.path = path;
     }
@@ -17,7 +19,7 @@ public abstract class DictionaryLink {
         return description;
     }
 
-    public String getPath() {
+    public Path getPath() {
         return path;
     }
 

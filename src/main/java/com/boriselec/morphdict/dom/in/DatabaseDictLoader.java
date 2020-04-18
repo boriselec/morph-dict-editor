@@ -6,6 +6,7 @@ import com.boriselec.morphdict.dom.edit.LemmaTransformer;
 import com.boriselec.morphdict.dom.out.CompositeLemmaWriter;
 import com.boriselec.morphdict.dom.out.ConsoleProgressWriter;
 import com.boriselec.morphdict.dom.out.LemmaWriter;
+import com.boriselec.morphdict.load.DictLoader;
 import com.boriselec.morphdict.storage.VersionStorage;
 import com.boriselec.morphdict.storage.sql.VersionType;
 import org.slf4j.Logger;
@@ -37,21 +38,21 @@ public class DatabaseDictLoader {
 
     public DatabaseDictLoader(@Qualifier("database") LemmaWriter dbLemmaWriter,
                               JAXBContext lemmaJaxbContext,
-                              @Value("#{'${file.root}' + '${opencorpora.xml.path}'}") String inXmlPath,
+                              @Value("${MORPH_FILE_ROOT}") String fileRoot,
                               LemmaTransformer lemmaFilter,
                               @Qualifier("inFileLock") ReentrantLock inFileLock,
                               @Qualifier("dbLock") ReentrantLock dbLock,
                               VersionStorage versionDao) {
         this.dbLemmaWriter = new CompositeLemmaWriter(new ConsoleProgressWriter(log), dbLemmaWriter);
         this.lemmaJaxbContext = lemmaJaxbContext;
-        this.inXmlPath = inXmlPath;
+        this.inXmlPath = fileRoot + DictLoader.ORIGINAL_FILENAME;
         this.lemmaFilter = lemmaFilter;
         this.inFileLock = inFileLock;
         this.dbLock = dbLock;
         this.versionDao = versionDao;
     }
 
-    @Scheduled(fixedDelayString = "#{${database.loader.delay.minutes} * 60 * 1000}")
+    @Scheduled(fixedDelayString = "#{${MORPH_DBLOADER_PERIOD_MINUTES} * 60 * 1000}")
     public void load() {
         ZonedDateTime fileVersion = versionDao.get(VersionType.FILE);
         ZonedDateTime storageVersion = versionDao.get(VersionType.STORAGE);
