@@ -11,7 +11,7 @@ public class DictLoaderTask {
         this.dictLoader = dictLoader;
     }
 
-    @Scheduled(fixedDelayString = "#{${dict.loader.delay.minutes} * 60 * 1000}")
+    @Scheduled(fixedDelayString = "#{${MORPH_FILELOADER_PERIOD_MINUTES} * 60 * 1000}")
     public void update() {
         dictLoader.ensureLastVersion();
     }

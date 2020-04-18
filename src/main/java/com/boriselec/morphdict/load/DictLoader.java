@@ -31,8 +31,9 @@ import static com.boriselec.morphdict.storage.VersionStorage.VERSION_FORMAT;
 
 @Component
 public class DictLoader {
-    private static final Logger log = LoggerFactory.getLogger(DictLoader.class);
+    public static final String ORIGINAL_FILENAME = "dict.opcorpora.xml";
 
+    private static final Logger log = LoggerFactory.getLogger(DictLoader.class);
     private static final String OPEN_CORPORA_PAGE = "http://opencorpora.org/?page=downloads";
     private static final String DICT_DOWNLOAD = "http://opencorpora.org/files/export/dict/dict.opcorpora.xml.zip";
 
@@ -42,12 +43,11 @@ public class DictLoader {
 
     private final ReentrantLock inFileLock;
 
-    public DictLoader(@Value("#{'${file.root}' + '${opencorpora.xml.path}'}") String destinationPath,
-                      @Value("#{'${file.root}' + '${temp.zip.path}'}") String tempZipPath,
+    public DictLoader(@Value("${MORPH_FILE_ROOT}") String fileRoot,
                       VersionStorage versionStorage,
                       @Qualifier("inFileLock") ReentrantLock inFileLock) {
-        this.destinationPath = Paths.get(destinationPath);
-        this.tempZipPath = tempZipPath;
+        this.destinationPath = Paths.get(fileRoot + ORIGINAL_FILENAME);
+        this.tempZipPath = fileRoot + "dict.opcorpora.xml.zip";
         this.versionStorage = versionStorage;
         this.inFileLock = inFileLock;
     }

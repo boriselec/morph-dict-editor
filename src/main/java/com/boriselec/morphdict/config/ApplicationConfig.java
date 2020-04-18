@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.annotation.Order;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -28,17 +27,17 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import java.nio.file.Paths;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Configuration
 @ComponentScan(basePackageClasses = Application.class)
-@PropertySource(value = "classpath:application.properties")
 @EnableScheduling
 public class ApplicationConfig implements SchedulingConfigurer {
     @Bean
-    public Jdbi jdbi(@Value("${db.url}") String url,
-                     @Value("${db.username}") String username,
-                     @Value("${db.password}") String password) {
+    public Jdbi jdbi(@Value("${MORPH_DB_URL}") String url,
+                     @Value("${MORPH_DB_USERNAME}") String username,
+                     @Value("${MORPH_DB_PASSWORD}") String password) {
         return Jdbi.create(url, username, password);
     }
 
@@ -68,16 +67,15 @@ public class ApplicationConfig implements SchedulingConfigurer {
 
     @Bean
     @Order(value = 1)
-    public DictionaryLink json(@Value("#{'${static.url}' + '${xml.path}'}") String xmlLink,
-                               @Value("#{'${file.root}' + '${xml.path}'}") String xmlPath,
+    public DictionaryLink json(@Value("${MORPH_FILE_ROOT}") String fileRoot,
                                JAXBContext lemmaJaxbContext) {
-        return new DictionaryLink("xml", xmlLink) {
+        return new DictionaryLink("xml", Paths.get(fileRoot + "dict.opcorpora.filtered.xml")) {
             @Override
             public LemmaWriter getWriter() {
                 try {
                     Marshaller marshaller = lemmaJaxbContext.createMarshaller();
                     marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
-                    return new XmlLemmaWriter(marshaller, xmlPath);
+                    return new XmlLemmaWriter(marshaller, fileRoot + getPath().getFileName().toString());
                 } catch (JAXBException e) {
                     throw new RuntimeException(e);
                 }
@@ -87,13 +85,12 @@ public class ApplicationConfig implements SchedulingConfigurer {
 
     @Bean
     @Order(value = 2)
-    public DictionaryLink xml(@Value("#{'${static.url}' + '${json.path}'}") String jsonLink,
-                              @Value("#{'${file.root}' + '${json.path}'}") String jsonPath,
+    public DictionaryLink xml(@Value("${MORPH_FILE_ROOT}") String fileRoot,
                               @Qualifier("internal") Gson gson) {
-        return new DictionaryLink("json", jsonLink) {
+        return new DictionaryLink("json", Paths.get(fileRoot + "dict.opcorpora.filtered.json")) {
             @Override
             public LemmaWriter getWriter() {
-                return new JsonLemmaWriter(gson, jsonPath);
+                return new JsonLemmaWriter(gson, fileRoot + getPath().getFileName().toString());
             }
         };
     }

@@ -137,13 +137,6 @@
                 <configuration>
                     <webResources>
                         <resource>
-                            <directory>src/main/resources</directory>
-                            <includes>
-                                <include>application.properties</include>
-                            </includes>
-                            <targetPath>WEB-INF/classes</targetPath>
-                        </resource>
-                        <resource>
                             <directory>src/main/webapp</directory>
                             <includes>
                                 <include>web.xml</include>
@@ -169,6 +162,34 @@
                         <systemProperty>
                             <name>logback.configurationFile</name>
                             <value>src/main/resources/logback.xml</value>
+                        </systemProperty>
+                        <systemProperty>
+                            <name>MORPH_FILE_ROOT</name>
+                            <value>/tmp/</value>
+                        </systemProperty>
+                        <systemProperty>
+                            <name>MORPH_DB_URL</name>
+                            <value>jdbc:mysql://localhost:3306/morph</value>
+                        </systemProperty>
+                        <systemProperty>
+                            <name>MORPH_DB_USERNAME</name>
+                            <value>root</value>
+                        </systemProperty>
+                        <systemProperty>
+                            <name>MORPH_DB_PASSWORD</name>
+                            <value>pass</value>
+                        </systemProperty>
+                        <systemProperty>
+                            <name>MORPH_FILELOADER_PERIOD_MINUTES</name>
+                            <value>60</value>
+                        </systemProperty>
+                        <systemProperty>
+                            <name>MORPH_DBLOADER_PERIOD_MINUTES</name>
+                            <value>5</value>
+                        </systemProperty>
+                        <systemProperty>
+                            <name>MORPH_REPO_PERIOD_MINUTES</name>
+                            <value>1</value>
                         </systemProperty>
                     </systemProperties>
                 </configuration>

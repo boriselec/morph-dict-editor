@@ -11,7 +11,7 @@ public class FileRepositoryTask {
         this.fileDictRepository = fileDictRepository;
     }
 
-    @Scheduled(fixedDelayString = "#{${file.repository.delay.minutes} * 60 * 1000}")
+    @Scheduled(fixedDelayString = "#{${MORPH_REPO_PERIOD_MINUTES} * 60 * 1000}")
     public void update() {
         fileDictRepository.update();
     }
