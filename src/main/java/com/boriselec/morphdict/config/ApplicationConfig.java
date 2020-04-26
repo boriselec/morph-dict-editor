@@ -9,6 +9,7 @@ import com.boriselec.morphdict.dom.out.JsonLemmaWriter;
 import com.boriselec.morphdict.dom.out.LemmaWriter;
 import com.boriselec.morphdict.dom.out.XmlLemmaWriter;
 import com.boriselec.morphdict.link.DictionaryLink;
+import com.boriselec.morphdict.load.DictLoader;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.jdbi.v3.core.Jdbi;
@@ -91,6 +92,27 @@ public class ApplicationConfig implements SchedulingConfigurer {
             @Override
             public LemmaWriter getWriter() {
                 return new JsonLemmaWriter(gson, fileRoot + getPath().getFileName().toString());
+            }
+        };
+    }
+
+    @Bean
+    @Order(value = 3)
+    public DictionaryLink original(@Value("${MORPH_FILE_ROOT}") String fileRoot) {
+        return new DictionaryLink("original", Paths.get(fileRoot + DictLoader.ORIGINAL_FILENAME)) {
+            @Override
+            public LemmaWriter getWriter() {
+                return new LemmaWriter() {
+                    @Override
+                    public void write(Lemma lemma) {
+                        // do nothing
+                    }
+
+                    @Override
+                    public void close() {
+                        // do nothing
+                    }
+                };
             }
         };
     }
