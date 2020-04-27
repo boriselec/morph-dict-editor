@@ -14,5 +14,5 @@ RUN apt-get update \
     && cd /home \
     && mvn compile \
     && mvn war:war \
-    && cp /home/target/morph*war /var/lib/jetty/webapps/ \
+    && cp /home/target/morph*war /var/lib/jetty/webapps/morph.war \
     && rm -rfv /home/*
