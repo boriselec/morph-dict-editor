@@ -1,18 +1,11 @@
-FROM jetty:9-jre11
-
+# build environment
+FROM maven:3.6.3-jdk-11 as build
 COPY src /home/src
 COPY pom.xml /home/
+RUN cd /home && \
+    mvn compile && \
+    mvn war:war
 
-USER root
-SHELL ["/bin/bash", "-c"]
-RUN apt-get update \
-    && apt-get -y install maven \
-#    no jdk in base image
-    && apt-get -y install openjdk-11-jdk \
-    && echo "JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/" >> /etc/environment \
-    && source /etc/environment \
-    && cd /home \
-    && mvn compile \
-    && mvn war:war \
-    && cp /home/target/morph*war /var/lib/jetty/webapps/morph.war \
-    && rm -rfv /home/*
+# production environment
+FROM jetty:9-jre11
+COPY --from=build /home/target/morph*war /var/lib/jetty/webapps/morph.war
