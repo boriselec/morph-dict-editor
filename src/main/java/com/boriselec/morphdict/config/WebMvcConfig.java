@@ -8,6 +8,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -52,5 +55,13 @@ class WebMvcConfig extends WebMvcConfigurationSupport {
         return new GsonBuilder()
             .setExclusionStrategies(new LemmaViewExclusionStrategy())
             .create();
+    }
+
+    @ControllerAdvice
+    public static class ControllerExceptionHandler {
+        @ResponseStatus(reason = "Internal Server Error")
+        @ExceptionHandler(Exception.class)
+        public void internalServerError() {
+        }
     }
 }
